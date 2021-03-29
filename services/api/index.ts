@@ -24,21 +24,15 @@ const gateway = new awsx.apigateway.API(preName('gateway'), {
   stageName: pulumi.getStack(),
 })
 
-const awsUSEast1 = new aws.Provider(preName('provider-usEast1'), {
-  region: aws.Region.USEast1,
-})
 let certId: pulumi.Output<string> | string | undefined = process.env.HEX_CERT_ID
 if (certId == null) {
   certId = config.requireSecret('hexCertId')
 }
-const cert = aws.acm.Certificate.get('hex-certificate', certId, undefined, {
-  provider: awsUSEast1,
-})
 
 const domainName = `${pulumi.getStack()}.api.hexahedron.io`
 
 const webDomain = new aws.apigateway.DomainName(preName(`domain-cdn`), {
-  certificateArn: cert.arn,
+  certificateArn: certId,
   domainName,
 })
 
