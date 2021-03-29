@@ -1,7 +1,0 @@
-CreateIndex({
-  name: "games-by-players",
-  source: Collection("games"),
-  terms: [{
-    field: ["data", "players"]
-  }]
-})

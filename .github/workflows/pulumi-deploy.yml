@@ -35,6 +35,9 @@ jobs:
       - name: Install Pulumi CLI
         uses: pulumi/action-install-pulumi-cli@v1.0.1
 
+      - name: Update NPM
+        run: npm install -g npm@latest
+
       - name: Setup Backend Project
         run: cd services/api && npm run setup
 
