@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "deploy": "fauna-schema-migrate generate && fauna-schema-migrate apply",
+    "deploy:ci": "fauna-schema-migrate generate --legacy && fauna-schema-migrate apply --legacy",
+    "rollback": "fauna-schema-migrate rollback"
+  },
+  "dependencies": {
+    "fauna-schema-migrate": "^2.1.0",
+    "faunadb": "^4.1.2"
+  }
+}

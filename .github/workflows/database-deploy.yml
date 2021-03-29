@@ -1,0 +1,42 @@
+name: Deploy DB
+on:
+  push:
+    paths:
+      - "services/database/fauna/**"
+      - ".github/workflows/database-deploy.yml"
+    branches:
+      - development
+      - staging
+      - main
+
+jobs:
+  deploy:
+    name: Deploy FaunaDB
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Credentials
+        uses: iamtheyammer/branch-env-vars@v1.0.2
+        with:
+          bevActionOnNoRef: error
+          FAUNA_ADMIN_KEY: |
+            main:${{ secrets.MAIN_FAUNA_ADMIN_KEY }}
+            staging:${{ secrets.STAGING_FAUNA_ADMIN_KEY }}
+            development:${{ secrets.DEV_FAUNA_ADMIN_KEY }}
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+      
+      - name: Update NPM
+        run: npm install -g npm@latest
+
+      - name: Install Packages
+        run: cd services/database && npm install
+
+      - name: Run migration
+        run: cd services/database && npm run deploy:ci
+        timeout-minutes: 3
