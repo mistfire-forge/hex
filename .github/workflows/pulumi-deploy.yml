@@ -17,29 +17,12 @@ jobs:
       - name: Inject slug/short variables
         uses: rlespinasse/github-slug-action@v3.x
 
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Setup Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: "14"
-
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ca-central-1
-
-      - name: Install Pulumi CLI
-        uses: pulumi/action-install-pulumi-cli@v1.0.1
-
-      - name: Update NPM
-        run: npm install -g npm@latest
-
-      - name: Setup Backend Project
-        run: cd services/api && npm run setup
 
       - name: Set Fauna Access Key
         uses: iamtheyammer/branch-env-vars@v1.0.2
@@ -49,6 +32,23 @@ jobs:
             main:${{ secrets.MAIN_FAUNA_ACCESS_KEY }}
             staging:${{ secrets.STAGING_FAUNA_ACCESS_KEY }}
             development:${{ secrets.DEV_FAUNA_ACCESS_KEY }}
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+
+      - name: Update NPM
+        run: npm install -g npm@latest
+
+      - name: Setup Backend Project
+        run: cd services/api && npm run setup
+      
+      - name: Install Pulumi CLI
+        uses: pulumi/action-install-pulumi-cli@v1.0.1
 
       - name: Deploy Pulumi
         uses: pulumi/actions@v2
