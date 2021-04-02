@@ -55,7 +55,7 @@ export const Navbar: FC = (): ReactElement => {
               horizontal: 'center',
             }}
           >
-            <MenuItem onClick={closeMenu} component={Link} to='/target'>
+            <MenuItem onClick={closeMenu} component={Link} to='/target-selection'>
               <ListItemText primary='Target Selection' />
             </MenuItem>
           </Menu>

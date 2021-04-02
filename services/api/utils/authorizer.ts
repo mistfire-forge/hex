@@ -52,30 +52,3 @@ const authorizerInfo: awsx.apigateway.LambdaAuthorizerInfo = {
 export const authorizer = awsx.apigateway.getTokenLambdaAuthorizer({
   handler: authorizerInfo,
 })
-
-// const gatewayRole = new aws.iam.Role('gateway-role', {
-//   name: preName('gateway-role'),
-//   assumeRolePolicy: aws.iam.assumeRolePolicyForPrincipal({
-//     Service: ['apigateway.amazonaws.com'],
-//   }),
-// })
-
-// new aws.iam.RolePolicy('gateway-invocation-policy', {
-//   name: preName('gateway-invocation-policy'),
-//   policy: {
-//     Version: '2012-10-17',
-//     Statement: [
-//       {
-//         Action: 'lambda:InvokeFunction',
-//         Effect: 'Allow',
-//         Resource: authorizerLambda.arn,
-//       },
-//     ],
-//   },
-//   role: gatewayRole,
-// })
-
-// const tokenAuthorizer = awsx.apigateway.getTokenLambdaAuthorizer({
-//   handler: authorizerHandler,
-//   authorizerResultTtlInSeconds: 0,
-// })

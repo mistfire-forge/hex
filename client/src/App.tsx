@@ -4,8 +4,9 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
 import { CssBaseline } from '@material-ui/core'
 
-import { Navbar } from './Navbar'
+import { Navbar } from './components/Navbar'
 import { Splash } from './pages/Splash'
+import { TargetSelection } from './pages/TargetSelection'
 
 const App: FC = (): ReactElement => {
   return (
@@ -15,6 +16,9 @@ const App: FC = (): ReactElement => {
         <Navbar />
 
         <Switch>
+          <Route path='/target-selection'>
+            <TargetSelection />
+          </Route>
           <Route path='/'>
             <Splash />
           </Route>

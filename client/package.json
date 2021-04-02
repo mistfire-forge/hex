@@ -29,6 +29,7 @@
   "dependencies": {
     "@material-ui/core": "^4.9.14",
     "@material-ui/icons": "^4.9.1",
-    "faunadb": "^4.0.3"
+    "faunadb": "^4.0.3",
+    "valtio": "^1.0.1"
   }
 }

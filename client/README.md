@@ -1,1 +1,1 @@
-# Krieg Project
+# Hex Project
