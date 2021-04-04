@@ -1,30 +1,85 @@
-import React, { FC, ReactElement } from 'react'
+import React, { ReactElement } from 'react'
 import ReactDOM from 'react-dom'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import loadable from '@loadable/component'
 
 import { CssBaseline } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
 
 import { Navbar } from './components/Navbar'
-import { Splash } from './pages/Splash'
-import { TargetSelection } from './pages/TargetSelection'
 
-const App: FC = (): ReactElement => {
+// region Loadable Components
+const Splash = loadable(
+  () => import(/* webpackChunkName: "Splash" */ './pages/Splash'),
+  {
+    resolveComponent: components => components.Splash,
+  }
+)
+const SignIn = loadable(
+  () => import(/* webpackChunkName: "SignIn" */ './pages/SignIn'),
+  {
+    resolveComponent: components => components.SignIn,
+  }
+)
+const CreateAccount = loadable(
+  () => import(/* webpackChunkName: "CreateAccount" */ './pages/CreateAccount'),
+  {
+    resolveComponent: components => components.CreateAccount,
+  }
+)
+const TargetSelection = loadable(
+  () =>
+    import(/* webpackChunkName: "TargetSelection" */ './pages/TargetSelection'),
+  {
+    resolveComponent: components => components.TargetSelection,
+  }
+)
+const NotFound = loadable(
+  () => import(/* webpackChunkName: "NotFound" */ './pages/NotFound'),
+  {
+    resolveComponent: components => components.NotFound,
+  }
+)
+// endregion
+
+const useStyles = makeStyles({
+  grid: {
+    flex: 1,
+    display: 'grid',
+  },
+})
+
+function App(): ReactElement {
+  const classes = useStyles()
+
   return (
-    <div>
+    <>
       <CssBaseline />
       <Router>
         <Navbar />
 
-        <Switch>
-          <Route path='/target-selection'>
-            <TargetSelection />
-          </Route>
-          <Route path='/'>
-            <Splash />
-          </Route>
-        </Switch>
+        <div className={classes.grid}>
+          <Switch>
+            <Route path='/sign-in'>
+              <SignIn />
+            </Route>
+            <Route path='/create-account'>
+              <CreateAccount />
+            </Route>
+            <Route path='/target-selection'>
+              <TargetSelection />
+            </Route>
+            <Route exact path='/'>
+              <Splash />
+            </Route>
+
+            <Route>
+              <NotFound />
+            </Route>
+          </Switch>
+        </div>
       </Router>
-    </div>
+    </>
   )
 }
 

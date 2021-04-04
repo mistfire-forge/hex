@@ -1,5 +1,5 @@
-import React, { FC, ReactElement } from 'react'
+import React, { ReactElement } from 'react'
 
-export const Splash: FC = (): ReactElement => {
+export function Splash(): ReactElement {
   return <h1>Splash</h1>
 }

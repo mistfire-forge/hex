@@ -3,24 +3,24 @@ import * as aws from '@pulumi/aws'
 import * as awsx from '@pulumi/awsx'
 
 import { preName } from './utils/preName'
-import { me } from './routes'
+import { createAccount, me } from './routes'
 
 const config = new pulumi.Config()
 
-let faunaAccessKey: pulumi.Output<string> | string | undefined =
-  process.env.FAUNA_ACCESS_KEY
-if (faunaAccessKey == null) {
-  faunaAccessKey = config.requireSecret('faunaAccessKey')
-}
-
-new aws.ssm.Parameter(preName('fauna-access-key'), {
-  name: `/hex/fauna/${pulumi.getStack()}/fauna-access-key`,
-  type: 'SecureString',
-  value: faunaAccessKey,
-})
+// let faunaAccessKey: pulumi.Output<string> | string | undefined =
+//   process.env.FAUNA_ACCESS_KEY
+// if (faunaAccessKey == null) {
+//   faunaAccessKey = config.requireSecret('faunaAccessKey')
+// }
+//
+// new aws.ssm.Parameter(preName('fauna-access-key'), {
+//   name: `/hex/fauna/${pulumi.getStack()}/fauna-access-key`,
+//   type: 'SecureString',
+//   value: faunaAccessKey,
+// })
 
 const gateway = new awsx.apigateway.API(preName('gateway'), {
-  routes: [me],
+  routes: [me, createAccount],
   stageName: pulumi.getStack(),
 })
 

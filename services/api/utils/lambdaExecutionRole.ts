@@ -30,6 +30,17 @@ new aws.iam.RolePolicy(executionRolePolicyName, {
             }:${id}:parameter/hex/fauna/${pulumi.getStack()}/*`
         ),
       },
+      {
+        Effect: 'Allow',
+        Action: [
+          'logs:CreateLogGroup',
+          'logs:CreateLogStream',
+          'logs:PutLogEvents',
+        ],
+        Resource: accountId.apply(
+          id => `arn:aws:logs:${aws.config.region}:${id}:log-group:/hex/*`
+        ),
+      },
     ],
   },
 })

@@ -9,7 +9,7 @@ import {
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 
-import { TargetName, targetState } from '../utils/currentTarget'
+import { TargetName, networkState } from '../utils/networkState'
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -20,11 +20,11 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-export const TargetSelection: FC = (): ReactElement => {
+export function TargetSelection(): ReactElement {
   const classes = useStyles()
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    targetState.targetName = event.target.value
+    networkState.target = event.target.value
   }
 
   return (
@@ -35,7 +35,7 @@ export const TargetSelection: FC = (): ReactElement => {
             <FormLabel component='legend'>API Target</FormLabel>
 
             <RadioGroup
-              defaultValue={targetState.targetName}
+              defaultValue={networkState.target}
               onChange={handleChange}
             >
               <FormControlLabel

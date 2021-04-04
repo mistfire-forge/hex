@@ -1,7 +1,7 @@
 import * as awsx from '@pulumi/awsx'
 import * as aws from '@pulumi/aws'
 
-import { preName } from '../utils/preName'
+import { preName } from './preName'
 
 const authFunction = async (
   event: awsx.apigateway.AuthorizerEvent

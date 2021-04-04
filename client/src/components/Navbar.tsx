@@ -1,4 +1,4 @@
-import React, { FC, ReactElement, useState, MouseEvent } from 'react'
+import React, { ReactElement, useState, MouseEvent } from 'react'
 import { Link } from 'react-router-dom'
 
 import {
@@ -11,9 +11,9 @@ import {
   Toolbar,
   Typography,
 } from '@material-ui/core'
-import { LocationSearching } from '@material-ui/icons'
+import { LocationSearching, AccountCircle } from '@material-ui/icons'
 
-export const Navbar: FC = (): ReactElement => {
+export function Navbar(): ReactElement {
   //region Menu
   const [anchor, setAnchor] = useState<Element | null>(null)
   const openMenu = (event: MouseEvent): void => {
@@ -36,6 +36,10 @@ export const Navbar: FC = (): ReactElement => {
         <div style={{ flex: 4 }} />
 
         <div>
+          <IconButton color='inherit' component={Link} to='/sign-in'>
+            <AccountCircle />
+          </IconButton>
+
           <IconButton color='inherit' onClick={openMenu}>
             <LocationSearching />
           </IconButton>
@@ -55,7 +59,11 @@ export const Navbar: FC = (): ReactElement => {
               horizontal: 'center',
             }}
           >
-            <MenuItem onClick={closeMenu} component={Link} to='/target-selection'>
+            <MenuItem
+              onClick={closeMenu}
+              component={Link}
+              to='/target-selection'
+            >
               <ListItemText primary='Target Selection' />
             </MenuItem>
           </Menu>
