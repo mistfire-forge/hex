@@ -1,6 +1,0 @@
-config:
-  aws:region: ca-central-1
-  hex:faunaAccessKey:
-    secure: AAABAAmPAb4vF71+4MGIB22YAcibyI+63PXiS2YJwz9kMUZET7KfTfm4RtTbnue5r2jGNzRXJyoLG9a5X+0kMllJAcfgqLQK
-  hex:hexCertId:
-    secure: AAABAEOmG4wfcjo6UA11lTICzcSXyB8Rz7D+HS8XpTArLuiQwvB3BLFU4UUi/RGIyiZOqANsNDARFYiyK+OZx+XRQerZaQWMzgaMXBa1Qzqwcdw4K3LJpAuyjlOq4mqS5PGeMAjko8gh3vCTdDjfHzG5UQ==
