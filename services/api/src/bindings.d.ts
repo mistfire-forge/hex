@@ -1,5 +1,5 @@
 export {}
 
 declare global {
-  const fauna_access_key: string
+  const FAUNA_ACCESS_KEY: string
 }

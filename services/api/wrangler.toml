@@ -10,7 +10,7 @@ workers_dev = true
 [dev]
 port=9000
 
-[env.dev]
+[env.development]
 name = "hex-dev"
 route = "api.hexahedron.io/dev/*"
 workers_dev = false
@@ -20,7 +20,7 @@ name = "hex-staging"
 route = "api.hexahedron.io/staging/*"
 workers_dev = false
 
-[env.production]
+[env.main]
 name = "hex-production"
 route = "api.hexahedron.io/prod/*"
 workers_dev = false
