@@ -46,5 +46,7 @@ jobs:
           apiToken: ${{ secrets.WRANGLER_TOKEN }}
           environment: ${{ env.GITHUB_REF_SLUG }}
           workingDirectory: 'services/api'
+          secrets: |
+            FAUNA_ACCESS_KEY
         env:
           FAUNA_ACCESS_KEY: ${{ env.FAUNA_ACCESS_KEY }}
