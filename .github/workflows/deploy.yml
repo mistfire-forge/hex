@@ -1,0 +1,123 @@
+name: Deploy Hex
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+      - development
+
+jobs:
+  filter-changes:
+    name: Filter Changes
+    runs-on: ubuntu-latest
+    outputs:
+      client: ${{ steps.filter.outputs.client }}
+      api: ${{ steps.filter.outputs.api }}
+      db: ${{ steps.filter.outputs.db }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          base: ${{ github.ref }}
+          filters: |
+            api:
+              - 'modules/api/**'
+              - 'modules/shared/**'
+            db:
+              - 'modules/db/**'
+
+  update-api:
+    name: Update API
+    runs-on: ubuntu-latest
+    needs: filter-changes
+    if: ${{ needs.filter-changes.outputs.api == true }}
+    steps:
+      # Turnstyle?
+
+      - name: Inject slug/short variables
+        uses: rlespinasse/github-slug-action@v3.x
+
+      - name: Set Fauna Access Key
+        uses: iamtheyammer/branch-env-vars@v1.0.2
+        with:
+          bevActionOnNoRef: error
+          FAUNA_ACCESS_KEY: |
+            main:${{ secrets.MAIN_FAUNA_ACCESS_KEY }}
+            staging:${{ secrets.STAGING_FAUNA_ACCESS_KEY }}
+            development:${{ secrets.DEV_FAUNA_ACCESS_KEY }}
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+
+      - name: Update NPM
+        run: npm install -g npm@latest
+
+      - name: Setup Project
+        run: cd modules/api && npm install
+
+      - name: Publish
+        uses: cloudflare/wrangler-action@1.3.0
+        with:
+          apiToken: ${{ secrets.WRANGLER_TOKEN }}
+          environment: ${{ env.GITHUB_REF_SLUG }}
+          workingDirectory: 'modules/api'
+          secrets: |
+            FAUNA_ACCESS_KEY
+        env:
+          FAUNA_ACCESS_KEY: ${{ env.FAUNA_ACCESS_KEY }}
+
+  update-db:
+    name: Update API
+    runs-on: ubuntu-latest
+    needs: filter-changes
+    if: ${{ needs.filter-changes.outputs.db == true }}
+    steps:
+      # Turnstyle?
+
+      - name: Inject slug/short variables
+        uses: rlespinasse/github-slug-action@v3.x
+
+      - name: Set Credentials
+        uses: iamtheyammer/branch-env-vars@v1.0.2
+        with:
+          bevActionOnNoRef: error
+          FAUNA_ADMIN_KEY: |
+            main:${{ secrets.MAIN_FAUNA_ADMIN_KEY }}
+            staging:${{ secrets.STAGING_FAUNA_ADMIN_KEY }}
+            development:${{ secrets.DEV_FAUNA_ADMIN_KEY }}
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+
+      - name: Update NPM
+        run: npm install -g npm@latest
+
+      - name: Install Packages
+        run: cd modules/db && npm install
+
+      - name: Install Pulumi CLI
+        uses: pulumi/action-install-pulumi-cli@v1.0.1
+
+      - name: Deploy Pulumi
+        uses: pulumi/actions@v2
+        with:
+          command: up
+          stack-name: ${{ env.GITHUB_REF_SLUG }}
+          work-dir: modules/db
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+        timeout-minutes: 3
