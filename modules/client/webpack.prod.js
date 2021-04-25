@@ -15,7 +15,7 @@ module.exports = merge(common, {
     }),
   ],
   optimization: {
-    moduleIds: 'hashed',
+    moduleIds: 'deterministic',
     runtimeChunk: 'single',
     splitChunks: {
       chunks: 'all',

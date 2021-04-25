@@ -1,8 +1,11 @@
 {
   "extends": "@tsconfig/recommended/tsconfig.json",
   "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "Node",
     "sourceMap": true,
     "jsx": "react",
+    "target": "ESNext",
     "allowJs": false,
     "esModuleInterop": true,
     "lib": ["dom"],
