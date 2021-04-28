@@ -1,22 +1,23 @@
 import { createClient, query as q } from '../utils/faunaClient'
 import { wrapFaunaResponse } from '../utils/wrapFaunaResponse'
-import { Expr } from 'faunadb'
 import { RequestWithCors } from '../utils/checkCors'
-import { createError } from '../utils/createError'
-import { NetworkError } from '@hex/shared'
+import { createError, createSuccess } from '../utils/createResponse'
+import { RequestError } from '@hex/shared'
 
 const client = createClient()
 
 interface CreateResponse {
-  ref: Expr
-  secret: string
+  token: {
+    secret: string
+  }
+  user: Record<string, unknown>
 }
 
 export const createAccount = wrapFaunaResponse(async (req: RequestWithCors) => {
   const reqBody = await req.json()
 
   if (!reqBody.password || !reqBody.email || !reqBody.displayName) {
-    return createError({ code: NetworkError.NoData })
+    return createError({ code: RequestError.NoData })
   }
 
   const response: CreateResponse = await client.query(
@@ -31,24 +32,22 @@ export const createAccount = wrapFaunaResponse(async (req: RequestWithCors) => {
             data: {
               email: reqBody.email,
               displayName: reqBody.displayName,
+              created: q.ToDate(q.Now()),
             },
           })
         ),
+        token: q.Create(q.Tokens(), { instance: q.Var('ref') }),
+        user: q.Get(q.Var('ref')),
       },
-      q.Do(q.Create(q.Tokens(), { instance: q.Var('ref') }))
+      q.Do({ token: q.Var('token'), user: q.Var('user') })
     )
   )
 
-  return new Response(
-    JSON.stringify({
-      secret: response.secret,
-    }),
+  return createSuccess(
     {
-      status: 200,
-      headers: {
-        'content-type': 'application/json',
-        ...req.returnCorsHeaders,
-      },
-    }
+      user: response.user,
+      token: response.token.secret,
+    },
+    req
   )
 })

@@ -1,5 +1,11 @@
-import React, { FormEvent, ReactElement, useRef } from 'react'
-import { Link as RouterLink } from 'react-router-dom'
+import React, {
+  FormEvent,
+  ReactElement,
+  useCallback,
+  useRef,
+  useState,
+} from 'react'
+import { Link as RouterLink, useHistory, useLocation } from 'react-router-dom'
 
 import {
   Avatar,
@@ -13,6 +19,13 @@ import {
 } from '@material-ui/core'
 import { LockOutlined } from '@material-ui/icons'
 import { makeStyles } from '@material-ui/core/styles'
+import { postRequest } from '../../utils/apiCall'
+import { globalState } from '../../utils/globalState'
+
+enum SignInError {
+  ValidationError,
+  ServerError,
+}
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -42,16 +55,52 @@ const useStyles = makeStyles(theme => ({
 
 export function SignIn(): ReactElement {
   const classes = useStyles()
+  const history = useHistory()
+  const location = useLocation()
 
-  const isLoading = false
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<SignInError | null>(null)
 
   // Refs for inputs
-  const emailRef = useRef(null)
-  const passwordRef = useRef(null)
+  const emailRef = useRef<HTMLInputElement>(null)
+  const passwordRef = useRef<HTMLInputElement>(null)
 
-  const handleSubmit = (event: FormEvent) => {
+  const handleSubmit = useCallback(async (event: FormEvent) => {
     event.preventDefault()
-  }
+
+    const email = emailRef.current?.value
+    const password = passwordRef.current?.value
+
+    if (!password) {
+      setError(SignInError.ValidationError)
+      return
+    }
+
+    setIsLoading(true)
+
+    try {
+      const result = await signInRequest(email!, password!)
+
+      if (!result.success) {
+        // TODO
+        console.error('Request Failed', result)
+        setError(SignInError.ServerError)
+      } else {
+        globalState.authToken = result.data.token
+        globalState.user = result.data.user
+
+        // TODO
+        console.log(location.state)
+        history.replace('/')
+      }
+    } catch (error) {
+      // TODO
+      console.log(error)
+      setError(SignInError.ServerError)
+    }
+
+    setIsLoading(false)
+  }, [])
 
   return (
     <Container maxWidth='sm'>
@@ -105,4 +154,15 @@ export function SignIn(): ReactElement {
       </Card>
     </Container>
   )
+}
+
+async function signInRequest(email: string, password: string) {
+  const result = await postRequest('sign-in', {
+    body: JSON.stringify({
+      email,
+      password,
+    }),
+  })
+
+  return await result.json()
 }

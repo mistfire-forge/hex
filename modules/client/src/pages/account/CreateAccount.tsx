@@ -1,10 +1,17 @@
-import React, { FormEvent, ReactElement, useCallback, useRef } from "react";
-import { Redirect } from 'react-router-dom'
+import React, {
+  FormEvent,
+  ReactElement,
+  useCallback,
+  useRef,
+  useState,
+} from 'react'
+import { Redirect, useHistory } from 'react-router-dom'
 
 import {
   Avatar,
   Button,
   Card,
+  CircularProgress,
   Container,
   TextField,
   Typography,
@@ -12,8 +19,14 @@ import {
 import { Person } from '@material-ui/icons'
 import { makeStyles } from '@material-ui/core/styles'
 
-import { globalState } from '../utils/globalState'
-import { makeApiCall } from '../utils/apiCall'
+import { globalState } from '../../utils/globalState'
+import { postRequest } from '../../utils/apiCall'
+import { useSnapshot } from 'valtio'
+
+enum ErrorType {
+  NetworkError,
+  RequestError,
+}
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -34,18 +47,25 @@ const useStyles = makeStyles(theme => ({
 }))
 
 export function CreateAccount(): ReactElement {
-  if (globalState.authToken != null) {
+  const snapshot = useSnapshot(globalState)
+  if (snapshot.authToken != null) {
     return <Redirect to='/' />
   }
 
   const classes = useStyles()
+  const history = useHistory()
 
   const emailRef = useRef<HTMLInputElement | null>(null)
   const displayNameRef = useRef<HTMLInputElement | null>(null)
   const passwordRef = useRef<HTMLInputElement | null>(null)
 
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState<ErrorType | null>(null)
+
   const handleSubmit = useCallback(async (event: FormEvent) => {
     event.preventDefault()
+
+    // TODO: Handle Form Validation
 
     if (
       !emailRef.current?.value ||
@@ -54,14 +74,37 @@ export function CreateAccount(): ReactElement {
     ) {
       return
     }
-    await createAccountRequest(
-      emailRef.current?.value,
-      displayNameRef.current?.value,
-      passwordRef.current?.value
-    )
+
+    setIsSubmitting(true)
+
+    try {
+      const result = await createAccountRequest(
+        emailRef.current?.value,
+        displayNameRef.current?.value,
+        passwordRef.current?.value
+      )
+
+      if (!result.success) {
+        console.error(result)
+        setError(ErrorType.RequestError)
+      } else {
+        console.log(result)
+        globalState.authToken = result.data.token
+        globalState.user = result.data.user
+        history.push('/')
+      }
+    } catch (error) {
+      setError(ErrorType.NetworkError)
+    }
+
+    setIsSubmitting(false)
   }, [])
 
   // TODO: Listen to other login activities with Broadcast
+
+  let emailError = false
+  let displayNameError = false
+  let passwordError = false
 
   return (
     <Container maxWidth='sm'>
@@ -104,8 +147,13 @@ export function CreateAccount(): ReactElement {
             inputRef={passwordRef}
           />
 
-          <Button type='submit' fullWidth className={classes.submit}>
-            Create
+          <Button
+            type='submit'
+            disabled={isSubmitting}
+            fullWidth
+            className={classes.submit}
+          >
+            {isSubmitting ? <CircularProgress /> : 'Create'}
           </Button>
         </form>
       </Card>
@@ -118,11 +166,7 @@ async function createAccountRequest(
   displayName: string,
   password: string
 ) {
-  const result = await makeApiCall('create-account', {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-    },
+  const result = await postRequest('create-account', {
     body: JSON.stringify({
       email,
       displayName,
@@ -130,5 +174,5 @@ async function createAccountRequest(
     }),
   })
 
-  console.log(await result.json())
+  return await result.json()
 }

@@ -15,3 +15,16 @@ export async function makeApiCall(
     args
   )
 }
+
+export async function postRequest(
+  path: string,
+  args: Record<string, unknown>
+): Promise<Response> {
+  return makeApiCall(path, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+    },
+    ...args,
+  })
+}

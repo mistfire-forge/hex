@@ -1,7 +1,7 @@
 import { errors } from 'faunadb'
 import { RequestWithCors } from './checkCors'
-import { createError } from './createError'
-import { NetworkError } from '@hex/shared'
+import { createError } from './createResponse'
+import { RequestError } from '@hex/shared'
 import FaunaHTTPError = errors.FaunaHTTPError
 
 type ErrorHandler = (error: FaunaHTTPError, req?: RequestWithCors) => Response
@@ -13,7 +13,7 @@ function defaultErrorHandler(
 ): Response {
   const errorData = error.requestResult.responseContent.errors[0]
 
-  return createError({ code: NetworkError.DBError, data: errorData }, req)
+  return createError({ code: RequestError.DBError, data: errorData }, req)
 }
 
 export function wrapFaunaResponse(

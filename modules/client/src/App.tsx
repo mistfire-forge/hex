@@ -16,13 +16,16 @@ const Splash = loadable(
   }
 )
 const SignIn = loadable(
-  () => import(/* webpackChunkName: "SignIn" */ './pages/SignIn'),
+  () => import(/* webpackChunkName: "SignIn" */ './pages/account/SignIn'),
   {
     resolveComponent: components => components.SignIn,
   }
 )
 const CreateAccount = loadable(
-  () => import(/* webpackChunkName: "CreateAccount" */ './pages/CreateAccount'),
+  () =>
+    import(
+      /* webpackChunkName: "CreateAccount" */ './pages/account/CreateAccount'
+    ),
   {
     resolveComponent: components => components.CreateAccount,
   }
@@ -66,7 +69,7 @@ function App(): ReactElement {
             <Route path='/create-account'>
               <CreateAccount />
             </Route>
-            <Route path='/target-selection'>
+            <Route path='/target'>
               <TargetSelection />
             </Route>
             <Route exact path='/'>

@@ -15,7 +15,14 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             presets: [
-              ['@babel/preset-env', { targets: 'defaults' }],
+              [
+                '@babel/preset-env',
+                {
+                  useBuiltIns: 'usage',
+                  corejs: 3,
+                  targets: '> 0.25%, not dead',
+                },
+              ],
               '@babel/preset-react',
               '@babel/preset-typescript',
             ],

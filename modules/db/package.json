@@ -15,5 +15,6 @@
         "@pulumi/pulumi": "^2.0.0",
         "@triangularcube/fauna-pulumi-provider": "^0.2.4",
         "faunadb": "^4.2.0"
-    }
+    },
+    "license": "UNLICENSED"
 }

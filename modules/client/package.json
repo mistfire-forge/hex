@@ -28,7 +28,10 @@
     "@loadable/component": "^5.14.1",
     "@material-ui/core": "^4.9.14",
     "@material-ui/icons": "^4.9.1",
+    "core-js": "^3.11.0",
     "faunadb": "^4.0.3",
+    "regenerator-runtime": "^0.13.7",
     "valtio": "^1.0.1"
-  }
+  },
+  "license": "UNLICENSED"
 }
