@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@pulumi/pulumi": "^2.0.0",
-    "fauna-pulumi-provider": "^0.6.0",
+    "fauna-pulumi-provider": "^0.6.1",
     "faunadb": "^4.2.0"
   },
   "license": "UNLICENSED"

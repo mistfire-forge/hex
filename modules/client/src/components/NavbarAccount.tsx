@@ -1,4 +1,10 @@
-import { IconButton, ListItemText, Menu, MenuItem } from '@material-ui/core'
+import {
+  Button,
+  IconButton,
+  ListItemText,
+  Menu,
+  MenuItem,
+} from '@material-ui/core'
 import { AccountCircle } from '@material-ui/icons'
 import React, { MouseEvent, ReactElement, useCallback, useState } from 'react'
 import { Link, useHistory } from 'react-router-dom'
@@ -34,6 +40,10 @@ export function NavbarAccount(): ReactElement {
 
   return (
     <>
+      <Button color='inherit' component={Link} to='/my-maps'>
+        My Maps
+      </Button>
+
       <IconButton color='inherit' onClick={openMenu}>
         <AccountCircle />
       </IconButton>

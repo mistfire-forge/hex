@@ -6,10 +6,13 @@ import {
   Function,
 } from 'fauna-pulumi-provider'
 
+// region Collections
 const users = new Collection('users')
 const maps = new Collection('maps')
 const matches = new Collection('matches')
+// endregion
 
+// region Indexes
 const userMailIndex = new Index('user-by-email', {
   source: 'users',
   terms: [{ field: ['data', 'email'] }],
@@ -27,17 +30,22 @@ const matchesByPlayersIndex = new Index('matches-by-players', {
   terms: [{ field: ['data', 'players'] }],
 })
 
-const mapsByCreatorIndex = new Index(
-  'maps-by-creator',
-  {
-    source: 'maps',
-    terms: [{ field: ['data', 'creator'] }],
-  },
-  {
-    dependsOn: [maps],
-  }
-)
+const tokensByUserIndex = new Index('tokens-by-user', {
+  source: q.Tokens(),
+  terms: [{ field: ['instance'] }],
+  values: [
+    {
+      field: ['data', 'created'],
+      reverse: true,
+    },
+    {
+      field: ['ref'],
+    },
+  ],
+})
+// endregion
 
+// region Maps
 const createMapRole = new Role(
   'create-map-role',
   {
@@ -74,20 +82,44 @@ const createMapFunction = new Function(
   }
 )
 
+const mapListInfoByCreatorIndex = new Index(
+  'map-list-info-by-creator',
+  {
+    source: [
+      {
+        collection: 'maps',
+      },
+    ],
+    terms: [{ field: ['data', 'creator'] }],
+    values: [
+      {
+        field: ['ts'],
+      },
+      {
+        field: ['data', 'name'],
+      },
+    ],
+  },
+  {
+    dependsOn: [maps],
+  }
+)
+// endregion
+
 const playerRole = new Role(
   'player-role',
   {
     name: 'player',
     privileges: [
       {
-        resource: q.Collection('users'),
+        resource: q.Collection(users.name),
         actions: {
           // A player can read their own account data
           read: q.Query(ref => q.Equals(q.CurrentIdentity(), ref)),
         },
       },
       {
-        resource: q.Collection('maps'),
+        resource: q.Collection(maps.name),
         actions: {
           read: q.Query(ref =>
             q.Let(
@@ -95,7 +127,7 @@ const playerRole = new Role(
                 doc: q.Get(ref),
               },
               q.Or(
-                // A player can read any public map
+                // A player can read any published map
                 q.Select(['data', 'published'], q.Var('doc'), false),
 
                 // A player can read his own maps
@@ -109,9 +141,34 @@ const playerRole = new Role(
         },
       },
       {
+        resource: q.Index(mapListInfoByCreatorIndex.name),
+        actions: {
+          read: q.Query(terms =>
+            q.Equals(q.Select(0, terms), q.CurrentIdentity())
+          ),
+        },
+      },
+      {
+        // Players can create maps
         resource: q.Function(createMapFunction.name),
         actions: {
           call: true,
+        },
+      },
+      {
+        resource: q.Tokens(),
+        actions: {
+          // Users can read their own tokens
+          read: q.Query(ref =>
+            q.Equals(q.Select(['instance'], q.Get(ref)), q.CurrentIdentity())
+          ),
+        },
+      },
+      {
+        // Allow reading of the index for Tokens
+        resource: q.Index(tokensByUserIndex.name),
+        actions: {
+          read: true,
         },
       },
     ],
@@ -122,6 +179,6 @@ const playerRole = new Role(
     ],
   },
   {
-    dependsOn: [users, maps],
+    dependsOn: [users, maps, mapListInfoByCreatorIndex, createMapFunction],
   }
 )

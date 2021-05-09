@@ -1,19 +1,20 @@
 import React, { PropsWithChildren, ReactElement } from 'react'
-import { Redirect, Route } from 'react-router-dom'
+import { Redirect, Route, useLocation } from 'react-router-dom'
 import { useSnapshot } from 'valtio'
 
 import { globalState } from '../utils/globalState'
 
 interface PrivateRouteProps {
-  location: Location
+  path: string
 }
-export function PrivateRoute({
-  location,
-  ...rest
-}: PropsWithChildren<PrivateRouteProps>): ReactElement {
+export function PrivateRoute(
+  props: PropsWithChildren<PrivateRouteProps>
+): ReactElement {
   const snapshot = useSnapshot(globalState)
+  const location = useLocation()
+
   if (snapshot.authToken == null) {
     return <Redirect to={{ pathname: '/sign-in', state: { from: location } }} />
   }
-  return <Route {...rest} />
+  return <Route {...props} />
 }

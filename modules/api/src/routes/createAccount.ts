@@ -23,23 +23,29 @@ export const createAccount = wrapFaunaResponse(async (req: RequestWithCors) => {
   const response: CreateResponse = await client.query(
     q.Let(
       {
-        ref: q.Select(
-          'ref',
-          q.Create(q.Collection('users'), {
-            credentials: {
-              password: reqBody.password,
-            },
-            data: {
-              email: reqBody.email,
-              displayName: reqBody.displayName,
-              created: q.ToDate(q.Now()),
-            },
-          })
-        ),
-        token: q.Create(q.Tokens(), { instance: q.Var('ref') }),
-        user: q.Get(q.Var('ref')),
+        user: q.Create(q.Collection('users'), {
+          credentials: {
+            password: reqBody.password,
+          },
+          data: {
+            email: reqBody.email,
+            displayName: reqBody.displayName,
+            created: q.ToDate(q.Now()),
+          },
+        }),
+        ref: q.Select(['ref'], q.Var('user')),
+        token: q.Create(q.Tokens(), {
+          instance: q.Var('ref'),
+          data: {
+            created: q.Now(),
+            // TODO: Last Used Location, etc.
+          },
+        }),
       },
-      q.Do({ token: q.Var('token'), user: q.Var('user') })
+      {
+        token: q.Var('token'),
+        user: q.Var('user'),
+      }
     )
   )
 

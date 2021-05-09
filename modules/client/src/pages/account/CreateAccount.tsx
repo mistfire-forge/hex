@@ -125,6 +125,8 @@ export function CreateAccount(): ReactElement {
             name='email'
             id='email'
             inputRef={emailRef}
+            error={emailError}
+            helperText={''} // TODO
           />
 
           <TextField
@@ -135,6 +137,8 @@ export function CreateAccount(): ReactElement {
             name='displayName'
             id='displayName'
             inputRef={displayNameRef}
+            error={displayNameError}
+            helperText={''} // TODO
           />
 
           {/* TODO: Enforce password length */}
@@ -145,6 +149,8 @@ export function CreateAccount(): ReactElement {
             name='password'
             label='Password (10+ characters)'
             inputRef={passwordRef}
+            error={passwordError}
+            helperText={''} // TODO
           />
 
           <Button

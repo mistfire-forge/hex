@@ -1,5 +1,5 @@
 import { proxy } from 'valtio'
-import { devtools, subscribeKey } from 'valtio/utils'
+import { subscribeKey } from 'valtio/utils'
 import { Client, query as q, values } from 'faunadb'
 
 export enum TargetName {

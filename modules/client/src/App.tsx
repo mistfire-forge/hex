@@ -7,6 +7,7 @@ import { CssBaseline } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 
 import { Navbar } from './components/Navbar'
+import { PrivateRoute } from './components/PrivateRoute'
 
 // region Loadable Components
 const Splash = loadable(
@@ -43,12 +44,23 @@ const NotFound = loadable(
     resolveComponent: components => components.NotFound,
   }
 )
+const Browse = loadable(
+  () => import(/* webpackChunkName: "Browse" */ './pages/Browse'),
+  {
+    resolveComponent: components => components.Browse,
+  }
+)
+const MyMaps = loadable(
+  () => import(/* webpackChunkName: "MyMaps" */ './pages/MyMaps'),
+  {
+    resolveComponent: components => components.MyMaps,
+  }
+)
 // endregion
 
 const useStyles = makeStyles({
   grid: {
     flex: 1,
-    display: 'grid',
   },
 })
 
@@ -63,19 +75,28 @@ function App(): ReactElement {
 
         <div className={classes.grid}>
           <Switch>
+            <Route exact path='/'>
+              <Splash />
+            </Route>
+
             <Route path='/sign-in'>
               <SignIn />
             </Route>
             <Route path='/create-account'>
               <CreateAccount />
             </Route>
+
+            <Route path='/browse'>
+              <Browse />
+            </Route>
+
+            <PrivateRoute path='/my-maps'>
+              <MyMaps />
+            </PrivateRoute>
+
             <Route path='/target'>
               <TargetSelection />
             </Route>
-            <Route exact path='/'>
-              <Splash />
-            </Route>
-
             <Route>
               <NotFound />
             </Route>

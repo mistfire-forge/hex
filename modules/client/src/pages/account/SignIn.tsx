@@ -90,7 +90,7 @@ export function SignIn(): ReactElement {
         globalState.user = result.data.user
 
         // TODO
-        console.log(location.state)
+        console.log('Location State', location.state)
         history.replace('/')
       }
     } catch (error) {
