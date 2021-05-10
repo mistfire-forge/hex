@@ -56,6 +56,12 @@ const MyMaps = loadable(
     resolveComponent: components => components.MyMaps,
   }
 )
+const Map = loadable(
+  () => import(/* webpackChunkName: "Map" */ './pages/Map'),
+  {
+    resolveComponent: components => components.Map,
+  }
+)
 // endregion
 
 const useStyles = makeStyles({
@@ -88,6 +94,10 @@ function App(): ReactElement {
 
             <Route path='/browse'>
               <Browse />
+            </Route>
+
+            <Route path='/map/:id'>
+              <Map />
             </Route>
 
             <PrivateRoute path='/my-maps'>
