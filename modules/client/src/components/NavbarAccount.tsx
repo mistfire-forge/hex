@@ -18,6 +18,7 @@ export function NavbarAccount(): ReactElement {
   const [anchor, setAnchor] = useState<Element | null>(null)
 
   const signOut = useCallback(() => {
+    // TODO: Invalidate token
     globalState.user = null
     history.push('/')
     closeMenu()

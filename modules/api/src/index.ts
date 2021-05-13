@@ -1,5 +1,6 @@
 import { Router } from 'itty-router'
 import { createMap } from './routes/createMap'
+import { map } from './routes/map'
 
 import { me } from './routes/me'
 import { myMaps } from './routes/myMaps'
@@ -20,11 +21,19 @@ router.post('*', checkCors, checkToken)
 router.post('/create-account', createAccount)
 router.post('/sign-in', signIn)
 
+router.get('/map/:id', map)
+
 router.get('/me', privateRoute, me)
 router.get('/my-maps', privateRoute, myMaps)
 router.post('/create-map', privateRoute, createMap)
 
-router.all('*', () => new Response('Not Found', { status: 404 }))
+router.all(
+  '*',
+  () =>
+    new Response('Not Found', {
+      status: 404,
+    })
+)
 
 addEventListener('fetch', (event: FetchEvent) => {
   event.respondWith(router.handle(event.request))

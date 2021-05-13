@@ -1,6 +1,4 @@
-import { RequestError } from '@hex/shared'
-
-import { createError, createSuccess } from '../utils/createResponse'
+import { createSuccess } from '../utils/createResponse'
 import { createClient, query as q } from '../utils/faunaClient'
 import { RequestWithToken } from '../utils/token'
 import { wrapFaunaResponse } from '../utils/wrapFaunaResponse'

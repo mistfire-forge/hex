@@ -1,4 +1,3 @@
-import React, { ReactElement } from 'react'
 import {
   Card,
   CardActionArea,
@@ -8,6 +7,8 @@ import {
   Typography,
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
+import React, { ReactElement } from 'react'
+import { useHistory } from 'react-router-dom'
 
 const useStyles = makeStyles({
   media: {
@@ -17,18 +18,21 @@ const useStyles = makeStyles({
 
 interface MapGridItemProps {
   name: string
+  id: number
   imageURL: string
 }
 export function MapGridItem({
   name,
+  id,
   imageURL,
 }: MapGridItemProps): ReactElement {
   const classes = useStyles()
+  const history = useHistory()
 
   return (
     <Grid item xs={12} sm={6}>
       <Card>
-        <CardActionArea>
+        <CardActionArea onClick={() => history.push(`/map/${id}`)}>
           <CardMedia className={classes.media} image={imageURL} />
           <CardContent>
             <Typography gutterBottom variant='h6'>

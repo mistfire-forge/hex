@@ -141,6 +141,14 @@ const playerRole = new Role(
               )
             )
           ),
+          // Create is allowed over UDF
+
+          write: q.Query((oldData, newData) =>
+            q.And(
+              q.Equals(q.Select(['creator'], oldData), q.CurrentIdentity()),
+              q.Equals(q.Select(['creator'], newData), q.CurrentIdentity())
+            )
+          ),
         },
       },
       {

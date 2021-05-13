@@ -38,8 +38,6 @@ export function MyMaps(): ReactElement {
 
       const result = await getRequest('/my-maps')
 
-      console.log(result.data)
-
       if (result.success) {
         const list = (result.data as MapQueryResults).map(element => ({
           name: element[1],
@@ -62,8 +60,6 @@ export function MyMaps(): ReactElement {
     return <Spinner />
   }
 
-  console.log(mapsList)
-
   return (
     <Container maxWidth='md'>
       <CreateMapDialog
@@ -83,6 +79,7 @@ export function MyMaps(): ReactElement {
           {mapsList.map(element => (
             <MapGridItem
               name={element.name}
+              id={element.refId}
               key={element.refId}
               imageURL='http://placekitten.com/400/300'
             />
