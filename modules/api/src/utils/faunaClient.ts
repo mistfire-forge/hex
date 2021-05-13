@@ -1,7 +1,7 @@
 import { Client } from 'faunadb'
 export { query } from 'faunadb'
 
-export const createClient = (key: string = FAUNA_ACCESS_KEY): Client => {
+export const createClient = (key: string): Client => {
   return new Client({
     secret: key,
     fetch: (url: RequestInfo, params?: RequestInit): Promise<Response> => {
@@ -17,4 +17,8 @@ export const createClient = (key: string = FAUNA_ACCESS_KEY): Client => {
       return Promise.race<Response>([abortPromise, fetch(url, params)])
     },
   })
+}
+
+export const createServerClient = (): Client => {
+  return createClient(FAUNA_ACCESS_KEY)
 }

@@ -5,9 +5,12 @@ import loadable from '@loadable/component'
 
 import { CssBaseline } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
+import { useSnapshot } from 'valtio'
 
 import { Navbar } from './components/Navbar'
 import { PrivateRoute } from './components/PrivateRoute'
+import { Spinner } from './components/Spinner'
+import { globalState } from './utils/globalState'
 
 // region Loadable Components
 const Splash = loadable(
@@ -72,47 +75,52 @@ const useStyles = makeStyles({
 
 function App(): ReactElement {
   const classes = useStyles()
+  const snapshot = useSnapshot(globalState)
 
   return (
     <>
       <CssBaseline />
-      <Router>
-        <Navbar />
+      {snapshot.initialized ? (
+        <Router>
+          <Navbar />
 
-        <div className={classes.grid}>
-          <Switch>
-            <Route exact path='/'>
-              <Splash />
-            </Route>
+          <div className={classes.grid}>
+            <Switch>
+              <Route exact path='/'>
+                <Splash />
+              </Route>
 
-            <Route path='/sign-in'>
-              <SignIn />
-            </Route>
-            <Route path='/create-account'>
-              <CreateAccount />
-            </Route>
+              <Route path='/sign-in'>
+                <SignIn />
+              </Route>
+              <Route path='/create-account'>
+                <CreateAccount />
+              </Route>
 
-            <Route path='/browse'>
-              <Browse />
-            </Route>
+              <Route path='/browse'>
+                <Browse />
+              </Route>
 
-            <Route path='/map/:id'>
-              <Map />
-            </Route>
+              <Route path='/map/:id'>
+                <Map />
+              </Route>
 
-            <PrivateRoute path='/my-maps'>
-              <MyMaps />
-            </PrivateRoute>
+              <PrivateRoute path='/my-maps'>
+                <MyMaps />
+              </PrivateRoute>
 
-            <Route path='/target'>
-              <TargetSelection />
-            </Route>
-            <Route>
-              <NotFound />
-            </Route>
-          </Switch>
-        </div>
-      </Router>
+              <Route path='/target'>
+                <TargetSelection />
+              </Route>
+              <Route>
+                <NotFound />
+              </Route>
+            </Switch>
+          </div>
+        </Router>
+      ) : (
+        <Spinner />
+      )}
     </>
   )
 }

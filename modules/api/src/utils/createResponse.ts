@@ -2,10 +2,7 @@ import { RequestError } from '@hex/shared'
 
 import { RequestWithCors } from './checkCors'
 
-export function createSuccess(
-  body: Record<string, unknown>,
-  req?: RequestWithCors
-): Response {
+export function createSuccess(body?: any, req?: RequestWithCors): Response {
   return createResponse(
     {
       success: true,
@@ -16,7 +13,7 @@ export function createSuccess(
 }
 
 export function createError(
-  body: { code: RequestError; data?: Record<string, unknown> },
+  body?: { code: RequestError; data?: Record<string, unknown> },
   req?: RequestWithCors
 ): Response {
   return createResponse(
@@ -28,14 +25,12 @@ export function createError(
   )
 }
 
-function createResponse(
-  body: Record<string, unknown>,
-  req?: RequestWithCors
-): Response {
+function createResponse(body: any, req?: RequestWithCors): Response {
   return new Response(JSON.stringify(body), {
     status: 200,
     headers: {
       'content-type': 'application/json',
+      'access-control-allow-credentials': 'true',
       ...req?.returnCorsHeaders,
     },
   })

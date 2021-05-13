@@ -1,10 +1,9 @@
-import { createClient, query as q } from '../utils/faunaClient'
-import { wrapFaunaResponse } from '../utils/wrapFaunaResponse'
+import { RequestError } from '@hex/shared'
 import { RequestWithCors } from '../utils/checkCors'
 import { createError, createSuccess } from '../utils/createResponse'
-import { RequestError } from '@hex/shared'
-
-const client = createClient()
+import { createServerClient, query as q } from '../utils/faunaClient'
+import { setTokenHeader } from '../utils/token'
+import { wrapFaunaResponse } from '../utils/wrapFaunaResponse'
 
 interface CreateResponse {
   token: {
@@ -20,7 +19,9 @@ export const createAccount = wrapFaunaResponse(async (req: RequestWithCors) => {
     return createError({ code: RequestError.NoData })
   }
 
-  const response: CreateResponse = await client.query(
+  const client = createServerClient()
+
+  const queryResult: CreateResponse = await client.query(
     q.Let(
       {
         user: q.Create(q.Collection('users'), {
@@ -49,11 +50,14 @@ export const createAccount = wrapFaunaResponse(async (req: RequestWithCors) => {
     )
   )
 
-  return createSuccess(
+  const response = createSuccess(
     {
-      user: response.user,
-      token: response.token.secret,
+      user: queryResult.user,
     },
     req
   )
+
+  setTokenHeader(queryResult.token.secret, response)
+
+  return response
 })

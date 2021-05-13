@@ -48,7 +48,7 @@ const useStyles = makeStyles(theme => ({
 
 export function CreateAccount(): ReactElement {
   const snapshot = useSnapshot(globalState)
-  if (snapshot.authToken != null) {
+  if (snapshot.user != null) {
     return <Redirect to='/' />
   }
 
@@ -85,11 +85,8 @@ export function CreateAccount(): ReactElement {
       )
 
       if (!result.success) {
-        console.error(result)
         setError(ErrorType.RequestError)
       } else {
-        console.log(result)
-        globalState.authToken = result.data.token
         globalState.user = result.data.user
         history.push('/')
       }

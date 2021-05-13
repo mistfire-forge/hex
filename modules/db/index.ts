@@ -98,6 +98,9 @@ const mapListInfoByCreatorIndex = new Index(
       {
         field: ['data', 'name'],
       },
+      {
+        field: ['ref'],
+      },
     ],
   },
   {
@@ -143,9 +146,7 @@ const playerRole = new Role(
       {
         resource: q.Index(mapListInfoByCreatorIndex.name),
         actions: {
-          read: q.Query(terms =>
-            q.Equals(q.Select(0, terms), q.CurrentIdentity())
-          ),
+          read: true,
         },
       },
       {

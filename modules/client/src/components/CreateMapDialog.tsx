@@ -8,9 +8,8 @@ import {
   TextField,
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
-import { query as q } from 'faunadb'
 
-import { globalState } from '../utils/globalState'
+import { postRequest } from '../utils/apiCall'
 import { Spinner } from './Spinner'
 
 const useStyles = makeStyles({
@@ -83,17 +82,17 @@ export function CreateMapDialog({
 }
 
 async function createMap(name: string) {
-  if (globalState.client == null) {
-    return
-  }
+  const result = await postRequest('/create-map', {
+    body: JSON.stringify({
+      name,
+    }),
+  })
 
-  try {
-    const response = await globalState.client.query(
-      q.Call(q.Function('create-map'), name)
-    )
+  console.log('Result', result)
 
-    console.log(response)
-  } catch (error) {
-    console.log(error)
+  if (result.success) {
+    console.log(result.data)
+  } else {
+    console.error(result.error)
   }
 }

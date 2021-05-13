@@ -18,7 +18,7 @@ export function NavbarAccount(): ReactElement {
   const [anchor, setAnchor] = useState<Element | null>(null)
 
   const signOut = useCallback(() => {
-    globalState.authToken = null
+    globalState.user = null
     history.push('/')
     closeMenu()
   }, [])
@@ -30,7 +30,7 @@ export function NavbarAccount(): ReactElement {
     setAnchor(null)
   }
 
-  if (!snapshot.authToken) {
+  if (!snapshot.user) {
     return (
       <IconButton color='inherit' component={Link} to='/sign-in'>
         <AccountCircle />

@@ -3,7 +3,7 @@ type = "webpack"
 webpack_config = "webpack.config.js"
 account_id = "c08578525b891edc13c8187ab8e78d53"
 zone_id = "84460b743cd17a92f2b921f9138a3cd0"
-vars = { BASE_PATH = "" }
+vars = { BASE_PATH = "", LOCAL=true }
 
 # Required for local dev in 1.15.0 of Wrangler
 workers_dev = true
@@ -15,16 +15,16 @@ port=9000
 name = "hex-dev"
 route = "api.hexahedron.io/dev/*"
 workers_dev = false
-vars = { BASE_PATH = "dev" }
+vars = { BASE_PATH = "dev", LOCAL=false }
 
 [env.staging]
 name = "hex-staging"
 route = "api.hexahedron.io/staging/*"
 workers_dev = false
-vars = { BASE_PATH = "staging" }
+vars = { BASE_PATH = "staging", LOCAL=false }
 
 [env.main]
 name = "hex-production"
 route = "api.hexahedron.io/prod/*"
 workers_dev = false
-vars = { BASE_PATH = "prod" }
+vars = { BASE_PATH = "prod", LOCAL=false }

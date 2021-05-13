@@ -1,4 +1,4 @@
-const allowed = ['http://localhost:2358', 'https://api.hexahedron.io']
+import { allowed } from '../utils/allowedList'
 
 export function options(req: Request): Response {
   const origin = req.headers.get('origin')
@@ -13,6 +13,7 @@ export function options(req: Request): Response {
     headers: {
       'Access-Control-Allow-Origin': origin,
       'Access-Control-Allow-Headers': 'content-type',
+      'Access-Control-Allow-Credentials': 'true',
     },
   })
 }

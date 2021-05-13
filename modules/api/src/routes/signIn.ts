@@ -1,6 +1,7 @@
 import { RequestWithCors } from '../utils/checkCors'
 import { createSuccess } from '../utils/createResponse'
-import { createClient, query as q } from '../utils/faunaClient'
+import { createServerClient, query as q } from '../utils/faunaClient'
+import { setTokenHeader } from '../utils/token'
 import { wrapFaunaResponse } from '../utils/wrapFaunaResponse'
 
 interface SignInResponse {
@@ -13,9 +14,9 @@ interface SignInResponse {
 export const signIn = wrapFaunaResponse(
   async (req: RequestWithCors): Promise<Response> => {
     const reqBody = await req.json()
-    const client = createClient()
+    const client = createServerClient()
 
-    const response: SignInResponse = await client.query(
+    const queryResult: SignInResponse = await client.query(
       q.Let(
         {
           user: q.Get(q.Match(q.Index('user-by-email'), reqBody.email)),
@@ -33,12 +34,15 @@ export const signIn = wrapFaunaResponse(
       )
     )
 
-    return createSuccess(
+    const response = createSuccess(
       {
-        token: response.token.secret,
-        user: response.user,
+        user: queryResult.user,
       },
       req
     )
+
+    setTokenHeader(queryResult.token.secret, response)
+
+    return response
   }
 )

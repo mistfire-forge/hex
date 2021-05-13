@@ -1,22 +1,25 @@
 import { Button, Container, Grid } from '@material-ui/core'
-import { query as q } from 'faunadb'
 import React, { ReactElement, useCallback, useEffect, useState } from 'react'
 import { CreateMapDialog } from '../components/CreateMapDialog'
 
 import { MapGridItem } from '../components/MapGridItem'
 import { Spinner } from '../components/Spinner'
 import { TitleBar } from '../components/TitleBar'
-import { globalState } from '../utils/globalState'
+import { getRequest } from '../utils/apiCall'
 
-interface MapQueryResults {
-  data: [
-    number, // TS
-    string // Map Name
-  ][]
-}
+type MapQueryResults = [
+  number, // TS
+  string, // Map Name
+  {
+    '@ref': {
+      id: number
+    }
+  }
+][]
 
 interface MapListData {
   name: string
+  refId: number
   data?: string // TODO
 }
 
@@ -31,22 +34,22 @@ export function MyMaps(): ReactElement {
 
   useEffect(() => {
     const fetchMaps = async (): Promise<void> => {
-      if (globalState.client == null) {
-        // TODO: Display Error
-        return
-      }
-
       setLoading(true)
 
-      try {
-        const result: MapQueryResults = await globalState.client.query(
-          q.Paginate(q.Match('map-list-info-by-creator', q.CurrentIdentity()))
-        )
+      const result = await getRequest('/my-maps')
 
-        const map = result.data.map(element => ({ name: element[1] }))
-        setMapsList(map)
-      } catch (error) {
-        console.log(error)
+      console.log(result.data)
+
+      if (result.success) {
+        const list = (result.data as MapQueryResults).map(element => ({
+          name: element[1],
+          refId: element[2]['@ref'].id,
+        }))
+
+        setMapsList(list)
+      } else {
+        console.log('Failed', result.error)
+        // TODO: Set Error
       }
 
       setLoading(false)
@@ -59,22 +62,7 @@ export function MyMaps(): ReactElement {
     return <Spinner />
   }
 
-  let MapListing: ReactElement
-  if (mapsList?.length ?? 0 > 0) {
-    MapListing = (
-      <Grid container spacing={3}>
-        {mapsList?.map(element => (
-          <MapGridItem
-            name={element.name}
-            key={element.name}
-            imageURL='http://placekitten.com/400/300'
-          />
-        ))}
-      </Grid>
-    )
-  } else {
-    MapListing = <div>No Maps!</div>
-  }
+  console.log(mapsList)
 
   return (
     <Container maxWidth='md'>
@@ -90,7 +78,19 @@ export function MyMaps(): ReactElement {
           </Button>
         }
       />
-      {MapListing}
+      {!!mapsList && mapsList.length > 0 ? (
+        <Grid container spacing={3}>
+          {mapsList.map(element => (
+            <MapGridItem
+              name={element.name}
+              key={element.refId}
+              imageURL='http://placekitten.com/400/300'
+            />
+          ))}
+        </Grid>
+      ) : (
+        <div>No Maps!</div>
+      )}
     </Container>
   )
 }

@@ -13,7 +13,8 @@ export function PrivateRoute(
   const snapshot = useSnapshot(globalState)
   const location = useLocation()
 
-  if (snapshot.authToken == null) {
+  if (snapshot.user == null) {
+    console.log('No User')
     return <Redirect to={{ pathname: '/sign-in', state: { from: location } }} />
   }
   return <Route {...props} />

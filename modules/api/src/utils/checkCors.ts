@@ -1,4 +1,4 @@
-const allowed = ['http://localhost:2358', 'https://api.hexahedron.io']
+import { allowed } from './allowedList'
 
 export interface RequestWithCors extends Request {
   returnCorsHeaders: {
@@ -21,7 +21,9 @@ export function checkCors(req: Request): Response | void {
     )
   }
 
-  ;(req as RequestWithCors).returnCorsHeaders = {
+  const withCors = req as RequestWithCors
+
+  withCors.returnCorsHeaders = {
     'Access-Control-Allow-Origin': origin,
     'Access-Control-Allow-Headers': 'content-type',
   }

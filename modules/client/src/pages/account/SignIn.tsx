@@ -19,12 +19,18 @@ import {
 } from '@material-ui/core'
 import { LockOutlined } from '@material-ui/icons'
 import { makeStyles } from '@material-ui/core/styles'
-import { postRequest } from '../../utils/apiCall'
-import { globalState } from '../../utils/globalState'
+import { APIResponse, postRequest } from '../../utils/apiCall'
+import { globalState, UserData } from '../../utils/globalState'
 
 enum SignInError {
   ValidationError,
   ServerError,
+}
+
+interface SignInResponse extends APIResponse {
+  data: {
+    user: UserData
+  }
 }
 
 const useStyles = makeStyles(theme => ({
@@ -86,7 +92,6 @@ export function SignIn(): ReactElement {
         console.error('Request Failed', result)
         setError(SignInError.ServerError)
       } else {
-        globalState.authToken = result.data.token
         globalState.user = result.data.user
 
         // TODO
@@ -157,12 +162,10 @@ export function SignIn(): ReactElement {
 }
 
 async function signInRequest(email: string, password: string) {
-  const result = await postRequest('sign-in', {
+  return (await postRequest('sign-in', {
     body: JSON.stringify({
       email,
       password,
     }),
-  })
-
-  return await result.json()
+  })) as SignInResponse
 }
