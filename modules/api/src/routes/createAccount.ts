@@ -1,4 +1,4 @@
-import { RequestError } from '@hex/shared'
+import { RequestError } from '../../../shared'
 import { RequestWithCors } from '../utils/checkCors'
 import { createError, createSuccess } from '../utils/createResponse'
 import { createServerClient, query as q } from '../utils/faunaClient'

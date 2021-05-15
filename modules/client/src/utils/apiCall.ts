@@ -1,4 +1,4 @@
-import { RequestError } from '@hex/shared'
+import { RequestError } from '../../../shared'
 import { globalState, TargetName } from './globalState'
 
 export interface APIResponse extends Response {

@@ -1,7 +1,7 @@
 import { errors } from 'faunadb'
+import { RequestError } from '../../../shared'
 import { RequestWithCors } from './checkCors'
 import { createError } from './createResponse'
-import { RequestError } from '@hex/shared'
 import FaunaHTTPError = errors.FaunaHTTPError
 
 type ErrorHandler = (error: FaunaHTTPError, req?: RequestWithCors) => Response

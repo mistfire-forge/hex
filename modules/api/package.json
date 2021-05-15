@@ -21,7 +21,6 @@
     "webpack-cli": "^4.6.0"
   },
   "dependencies": {
-    "@hex/shared": "file:../shared",
     "faunadb": "^4.2.0",
     "itty-router": "^2.3.6"
   }

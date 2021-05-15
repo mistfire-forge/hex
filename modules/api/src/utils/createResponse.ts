@@ -1,5 +1,4 @@
-import { RequestError } from '@hex/shared'
-
+import { RequestError } from '../../../shared'
 import { RequestWithCors } from './checkCors'
 
 export function createSuccess(body?: any, req?: RequestWithCors): Response {

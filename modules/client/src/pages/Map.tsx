@@ -1,6 +1,6 @@
 import React, { ReactElement, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { MapData } from '@hex/shared'
+import { MapData } from '../../../shared'
 import { Spinner } from '../components/Spinner'
 import { getRequest } from '../utils/apiCall'
 
