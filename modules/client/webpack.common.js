@@ -1,4 +1,5 @@
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const CopyPlugin = require('copy-webpack-plugin')
 const path = require('path')
 
 module.exports = {
@@ -40,5 +41,16 @@ module.exports = {
     'react-dom': 'ReactDOM',
     'react-router-dom': 'ReactRouterDOM',
   },
-  plugins: [new CleanWebpackPlugin()],
+  plugins: [
+    new CleanWebpackPlugin(),
+    new CopyPlugin({
+      patterns: [
+        {
+          from: 'src/game/graphics',
+          to: 'assets',
+          toType: 'dir',
+        },
+      ],
+    }),
+  ],
 }
