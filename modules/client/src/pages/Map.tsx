@@ -1,8 +1,9 @@
 import React, { ReactElement, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { MapData } from '../../../shared'
+import { MapDisplay } from '../components/MapDisplay'
 import { Spinner } from '../components/Spinner'
-import { getRequest } from '../utils/apiCall'
+import { FaunaResponse, getRequest } from '../utils/apiCall'
 
 export function Map(): ReactElement {
   const { id } = useParams<{ id: string }>()
@@ -11,9 +12,19 @@ export function Map(): ReactElement {
 
   useEffect(() => {
     async function getMap() {
-      const result = await getRequest(`/map/${id}`)
+      const response = await getRequest(`/map/${id}`)
 
-      console.log(result)
+      if (!response.success) {
+        console.error(response.error)
+
+        // TODO: Deal with error
+
+        return
+      }
+
+      const mapResponse = response as MapResponse
+
+      setMap(mapResponse.data.data)
     }
 
     getMap()
@@ -27,5 +38,11 @@ export function Map(): ReactElement {
     return <Spinner />
   }
 
-  return <div>Map!</div>
+  return <MapDisplay map={map} />
+}
+
+interface MapResponse extends FaunaResponse {
+  data: {
+    data: MapData
+  }
 }

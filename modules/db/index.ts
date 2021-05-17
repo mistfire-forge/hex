@@ -63,24 +63,24 @@ const createMapRole = new Role(
   }
 )
 
-const createMapFunction = new Function(
-  'create-map',
-  {
-    body: q.Query((name: string) =>
-      q.Create(q.Collection(maps.name), {
-        data: {
-          name: name,
-          creator: q.CurrentIdentity(),
-          created: q.ToDate(q.Now()),
-        },
-      })
-    ),
-    role: q.Role(createMapRole.name),
-  },
-  {
-    dependsOn: [createMapRole],
-  }
-)
+// const createMapFunction = new Function(
+//   'create-map',
+//   {
+//     body: q.Query((name: string) =>
+//       q.Create(q.Collection(maps.name), {
+//         data: {
+//           name: name,
+//           creator: q.CurrentIdentity(),
+//           created: q.ToDate(q.Now()),
+//         },
+//       })
+//     ),
+//     role: q.Role(createMapRole.name),
+//   },
+//   {
+//     dependsOn: [createMapRole],
+//   }
+// )
 
 const mapListInfoByCreatorIndex = new Index(
   'map-list-info-by-creator',
@@ -141,8 +141,9 @@ const playerRole = new Role(
               )
             )
           ),
-          // Create is allowed over UDF
-
+          create: q.Query(newDoc =>
+            q.Equals(q.Select(['data', 'creator'], newDoc), q.CurrentIdentity())
+          ),
           write: q.Query((oldData, newData) =>
             q.And(
               q.Equals(q.Select(['creator'], oldData), q.CurrentIdentity()),
@@ -157,13 +158,13 @@ const playerRole = new Role(
           read: true,
         },
       },
-      {
-        // Players can create maps
-        resource: q.Function(createMapFunction.name),
-        actions: {
-          call: true,
-        },
-      },
+      // {
+      //   // Players can create maps
+      //   resource: q.Function(createMapFunction.name),
+      //   actions: {
+      //     call: true,
+      //   },
+      // },
       {
         resource: q.Tokens(),
         actions: {
@@ -188,6 +189,6 @@ const playerRole = new Role(
     ],
   },
   {
-    dependsOn: [users, maps, mapListInfoByCreatorIndex, createMapFunction],
+    dependsOn: [users, maps, mapListInfoByCreatorIndex],
   }
 )
