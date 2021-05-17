@@ -1,6 +1,13 @@
 import { RequestError } from '../../../shared'
 import { globalState, TargetName } from './globalState'
 
+export interface FaunaResponse {
+  ref?: {
+    id: number
+  }
+  data: unknown
+}
+
 export interface APIResponse extends Response {
   success: boolean
   data?: unknown

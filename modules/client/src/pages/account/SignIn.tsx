@@ -65,6 +65,8 @@ export function SignIn(): ReactElement {
   const location = useLocation()
 
   const [isLoading, setIsLoading] = useState(false)
+
+  // TODO: Show Errors
   const [error, setError] = useState<SignInError | null>(null)
 
   // Refs for inputs
