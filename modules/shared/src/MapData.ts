@@ -8,3 +8,8 @@ export interface MapData {
     terrain: number[][] // X, Y
   }
 }
+
+export enum TerrainType {
+  PLAINS,
+  FOREST,
+}

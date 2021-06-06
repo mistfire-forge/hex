@@ -32,7 +32,7 @@ export function MapGridItem({
   return (
     <Grid item xs={12} sm={6}>
       <Card>
-        <CardActionArea onClick={() => history.push(`/map/${id}`)}>
+        <CardActionArea onClick={() => history.push(`/edit/${id}`)}>
           <CardMedia className={classes.media} image={imageURL} />
           <CardContent>
             <Typography gutterBottom variant='h6'>

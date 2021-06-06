@@ -1,6 +1,7 @@
 import React, { ReactElement, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { MapData } from '../../../shared'
+import { EditMapDisplay } from '../components/EditMapDisplay'
 import { MapDisplay } from '../components/MapDisplay'
 import { Spinner } from '../components/Spinner'
 import { FaunaResponse, getRequest } from '../utils/apiCall'
@@ -8,7 +9,7 @@ import { FaunaResponse, getRequest } from '../utils/apiCall'
 export function Map(): ReactElement {
   const { id } = useParams<{ id: string }>()
 
-  const [map, setMap] = useState<MapData | null>(null)
+  const [map, setMap] = useState<MapData>()
 
   useEffect(() => {
     async function getMap() {
@@ -30,18 +31,17 @@ export function Map(): ReactElement {
     getMap()
 
     return () => {
-      setMap(null)
+      setMap(undefined)
     }
   }, [id])
 
   if (map == null) {
     return <Spinner />
   }
-
   return <MapDisplay map={map} />
 }
 
-interface MapResponse extends FaunaResponse {
+export interface MapResponse extends FaunaResponse {
   data: {
     data: MapData
   }

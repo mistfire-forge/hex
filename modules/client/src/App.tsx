@@ -72,6 +72,12 @@ const Map = loadable(
     resolveComponent: components => components.Map,
   }
 )
+const EditMap = loadable(
+  () => import(/* webpackChunkName: "EditMap" */ './pages/EditMap'),
+  {
+    resolveComponent: components => components.EditMap,
+  }
+)
 // endregion
 
 const useStyles = makeStyles({
@@ -112,6 +118,10 @@ function App(): ReactElement {
                 <Route path='/map/:id'>
                   <Map />
                 </Route>
+
+                <PrivateRoute path='/edit/:id'>
+                  <EditMap />
+                </PrivateRoute>
 
                 <PrivateRoute path='/my-maps'>
                   <MyMaps />

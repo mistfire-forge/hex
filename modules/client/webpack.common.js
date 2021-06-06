@@ -46,7 +46,7 @@ module.exports = {
     new CopyPlugin({
       patterns: [
         {
-          from: 'src/game/graphics',
+          from: 'src/game/assets',
           to: 'assets',
           toType: 'dir',
         },

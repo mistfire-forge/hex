@@ -2,7 +2,8 @@ import { makeStyles } from '@material-ui/core'
 import Phaser from 'phaser'
 import React, { ReactElement, useEffect, useRef } from 'react'
 import { MapData } from '../../../shared'
-import { ViewMap } from '../game/scenes/ViewMap'
+import { LoadingKey, LoadingScene } from '../game/scenes/Loading'
+import { ViewMap, ViewMapKey } from '../game/scenes/ViewMap'
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -18,8 +19,6 @@ interface MapDisplayProps {
   map: MapData
 }
 export function MapDisplay({ map }: MapDisplayProps): ReactElement {
-  console.log(map)
-
   const classes = useStyles()
   const elementRef = useRef<HTMLDivElement>(null)
 
@@ -29,8 +28,11 @@ export function MapDisplay({ map }: MapDisplayProps): ReactElement {
       parent: elementRef.current!,
     })
 
-    engine.scene.add('map', ViewMap, false)
-    engine.scene.start('map')
+    engine.scene.add(LoadingKey, LoadingScene, false)
+    engine.scene.add(ViewMapKey, ViewMap, false)
+    engine.scene.start(LoadingKey, {
+      nextSceneKey: ViewMapKey,
+    })
 
     return () => {
       engine.destroy(true)
