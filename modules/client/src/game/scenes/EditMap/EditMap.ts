@@ -1,6 +1,6 @@
 import Phaser, { Scene } from 'phaser'
 import { TerrainType } from '../../../../../shared'
-import { initializedEditMapState } from '../../utils/EditMapState'
+import { getEditMapState } from '../../utils/EditMapState'
 import { TileSize } from '../../utils/GraphicsData'
 import { TerrainTile } from '../../utils/TerrainTile'
 import {
@@ -35,7 +35,7 @@ export class EditMap extends Scene {
   }
 
   private setupMap(): void {
-    const placement = initializedEditMapState.map.placement
+    const placement = getEditMapState().map.placement
 
     this.terrainTiles = Array(placement.size.width).fill(
       Array(placement.size.height)
@@ -52,7 +52,7 @@ export class EditMap extends Scene {
   private setupCamera(): void {
     this.mainCamera = this.cameras.main
 
-    const placement = initializedEditMapState.map.placement
+    const placement = getEditMapState().map.placement
 
     this.mainCamera.setBounds(
       0,

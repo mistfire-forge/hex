@@ -7,21 +7,24 @@ export enum EditMapTool {
 }
 
 interface EditMapState {
-  id?: string
-  map?: MapData
+  id: string
+  map: MapData
   tool?: EditMapTool
 }
 
-export const editMapState = proxy<EditMapState>({})
+let editMapState: EditMapState | null = null
 
-interface InitializedEditMapState {
-  id: string
-  map: MapData
+export function getEditMapState(): EditMapState {
+  if (editMapState == null) {
+    throw new Error('Accessing Edit Map State before initializing')
+  }
+  return editMapState
 }
 
-export const initializedEditMapState = editMapState as InitializedEditMapState
+export function initNewEditMapState(data: EditMapState): void {
+  editMapState = proxy<EditMapState>(data)
+}
 
 export function resetEditMapState(): void {
-  editMapState.id = undefined
-  editMapState.map = undefined
+  editMapState = null
 }
