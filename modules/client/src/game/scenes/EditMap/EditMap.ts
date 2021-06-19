@@ -1,7 +1,7 @@
 import Phaser, { Scene } from 'phaser'
 import { TerrainType } from '../../../../../shared'
 import { getEditMapState } from '../../utils/EditMapState'
-import { TileSize } from '../../utils/GraphicsData'
+import { GraphicsKey, TileSize } from '../../utils/GraphicsData'
 import { TerrainTile } from '../../utils/TerrainTile'
 import {
   EditMapMouseControls,
@@ -44,7 +44,12 @@ export class EditMap extends Scene {
     placement.terrain.forEach((element, x) => {
       element.forEach((terrain: TerrainType, y) => {
         // TODO Properly determine correct sprite
-        this.terrainTiles[x][y] = new TerrainTile(this, x, y, true, 'BG_Forest')
+        this.terrainTiles[x][y] = new TerrainTile(
+          this,
+          x,
+          y,
+          (terrain as unknown) as GraphicsKey // TODO
+        )
       })
     })
   }

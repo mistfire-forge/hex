@@ -1,20 +1,12 @@
 import * as Phaser from 'phaser'
-import { TileSize } from './GraphicsData'
+import { GraphicsData, GraphicsKey, TileSize } from './GraphicsData'
 
 export class TerrainTile extends Phaser.GameObjects.Sprite {
-  constructor(
-    scene: Phaser.Scene,
-    x: number,
-    y: number,
-    animated: boolean,
-    handle: string
-  ) {
-    super(scene, x * TileSize, y * TileSize, animated ? '' : handle)
+  constructor(scene: Phaser.Scene, x: number, y: number, graphic: GraphicsKey) {
+    super(scene, x * TileSize, y * TileSize, '')
 
     this.setOrigin(0, 0)
-    if (animated) {
-      this.play(handle)
-    }
+    this.play(GraphicsData[graphic].animKey)
 
     scene.add.existing(this)
   }

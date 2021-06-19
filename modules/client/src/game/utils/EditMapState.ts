@@ -1,6 +1,11 @@
 import { proxy } from 'valtio'
 import { MapData } from '../../../../shared'
 
+export enum EditMapToolType {
+  Terrain,
+  Unit,
+}
+
 export enum EditMapTool {
   Plains,
   Forest,
@@ -9,6 +14,7 @@ export enum EditMapTool {
 interface EditMapState {
   id: string
   map: MapData
+  toolType?: EditMapToolType
   tool?: EditMapTool
 }
 

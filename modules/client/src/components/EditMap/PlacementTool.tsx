@@ -1,13 +1,44 @@
 import { Grid } from '@material-ui/core'
-import React, { ReactElement } from 'react'
+import React, { ReactElement, useCallback, useMemo } from 'react'
 import Spritesheet from 'react-responsive-spritesheet'
-import { TileSize } from '../../game/utils/GraphicsData'
+import {
+  EditMapTool,
+  EditMapToolType,
+  getEditMapState,
+} from '../../game/utils/EditMapState'
+import {
+  GraphicsData,
+  GraphicsKey,
+  TileSize,
+} from '../../game/utils/GraphicsData'
 
-export function PlacementTool(): ReactElement {
+interface PlacementToolProps {
+  toolType: EditMapToolType
+  tool: EditMapTool
+  graphicKey: GraphicsKey
+}
+
+export function PlacementTool({
+  toolType,
+  tool,
+  graphicKey,
+}: PlacementToolProps): ReactElement {
+  const imagePath = useMemo(
+    () => `/assets/graphics/${GraphicsData[graphicKey].path}`,
+    []
+  )
+
+  const onClick = useCallback(() => {
+    const state = getEditMapState()
+
+    state.toolType = toolType
+    state.tool = tool
+  }, [])
+
   return (
-    <Grid item xs={3}>
+    <Grid item xs={3} onClick={onClick}>
       <Spritesheet
-        image='/assets/graphics/terrain/plains.png'
+        image={imagePath}
         widthFrame={TileSize}
         heightFrame={TileSize}
         steps={1}

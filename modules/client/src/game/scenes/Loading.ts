@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import { TerrainGraphics } from '../utils/GraphicsData'
+import { GraphicsData, TileSize } from '../utils/GraphicsData'
 
 interface LoadingSceneData {
   nextSceneKey: string
@@ -13,10 +13,12 @@ export class LoadingScene extends Phaser.Scene {
   }
 
   public async preload(): Promise<void> {
-    this.load.setBaseURL('/assets')
+    this.load.setBaseURL('/assets/graphics')
 
-    this.loadTerrainSheets()
-    this.load.image('cursor', 'graphics/cursor.png')
+    this.loadSpritesheets()
+    this.load.image('cursor', 'cursor.png')
+
+    // TODO: Load other stuff
   }
 
   public create(): void {
@@ -25,21 +27,23 @@ export class LoadingScene extends Phaser.Scene {
     this.scene.start(this.sceneData.nextSceneKey)
   }
 
-  private loadTerrainSheets(): void {
-    this.load.spritesheet(TerrainGraphics.key, TerrainGraphics.path, {
-      frameWidth: 64,
-      frameHeight: 64,
-    })
+  private loadSpritesheets(): void {
+    for (const data of Object.values(GraphicsData)) {
+      this.load.spritesheet({
+        key: data.key,
+        url: data.path,
+        frameConfig: {
+          frameWidth: data.width ?? TileSize,
+        },
+      })
+    }
   }
 
   private loadTerrainAnimations() {
-    for (const data of Object.values(TerrainGraphics.data)) {
+    for (const data of Object.values(GraphicsData)) {
       this.anims.create({
         key: data.animKey,
-        frames: data.frames.map(element => ({
-          frame: element,
-        })),
-        defaultTextureKey: TerrainGraphics.key,
+        frames: data.key,
         frameRate: 2,
         repeat: -1,
       })
