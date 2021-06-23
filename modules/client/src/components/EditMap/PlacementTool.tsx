@@ -1,6 +1,7 @@
-import { Grid } from '@material-ui/core'
+import { Grid, makeStyles } from '@material-ui/core'
 import React, { ReactElement, useCallback, useMemo } from 'react'
 import Spritesheet from 'react-responsive-spritesheet'
+import { useSnapshot } from 'valtio'
 import {
   EditMapTool,
   EditMapToolType,
@@ -9,6 +10,7 @@ import {
 import {
   GraphicsData,
   GraphicsKey,
+  SelectionCursorPadding,
   TileSize,
 } from '../../game/utils/GraphicsData'
 
@@ -23,28 +25,63 @@ export function PlacementTool({
   tool,
   graphicKey,
 }: PlacementToolProps): ReactElement {
+  const classes = useStyles()
+
   const imagePath = useMemo(
     () => `/assets/graphics/${GraphicsData[graphicKey].path}`,
     []
   )
 
-  const onClick = useCallback(() => {
-    const state = getEditMapState()
+  const editState = getEditMapState()
+  const snapshot = useSnapshot(editState)
 
-    state.toolType = toolType
-    state.tool = tool
+  const isCurrentTool = snapshot.tool === tool && snapshot.toolType === toolType
+
+  const onClick = useCallback(() => {
+    editState.toolType = toolType
+    editState.tool = tool
   }, [])
 
   return (
     <Grid item xs={3} onClick={onClick}>
-      <Spritesheet
-        image={imagePath}
-        widthFrame={TileSize}
-        heightFrame={TileSize}
-        steps={1}
-        fps={-1}
-        direction='forward'
-      />
+      <div className={classes.toolBlockContainer}>
+        <Spritesheet
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          className={classes.toolBlock}
+          image={imagePath}
+          widthFrame={TileSize}
+          heightFrame={TileSize}
+          steps={1}
+          fps={-1}
+          direction='forward'
+        />
+        {isCurrentTool && (
+          <img
+            className={classes.overlay}
+            src='/assets/graphics/cursor.png'
+            alt='Selection Cursor'
+          />
+        )}
+      </div>
     </Grid>
   )
 }
+
+const useStyles = makeStyles(theme => ({
+  toolBlockContainer: {
+    position: 'relative',
+    display: 'flex',
+    margin: 5,
+  },
+  toolBlock: {
+    padding: `${SelectionCursorPadding}px`,
+  },
+  overlay: {
+    position: 'absolute',
+    top: '0%',
+    left: '50%',
+    transform: 'translate(-50%, 0%)',
+    pointerEvents: 'none',
+  },
+}))
