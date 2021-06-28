@@ -1,6 +1,9 @@
 import Phaser, { Scene } from 'phaser'
-import { TerrainType } from '../../../../../shared'
-import { getEditMapState } from '../../utils/EditMapState'
+import {
+  EditMapTool,
+  EditMapToolType,
+  getEditMapState,
+} from '../../utils/EditMapState'
 import { GraphicsKey, TileSize } from '../../utils/GraphicsData'
 import { TerrainTile } from '../../utils/TerrainTile'
 import {
@@ -15,7 +18,7 @@ export class EditMap extends Scene {
   private mainCamera!: Phaser.Cameras.Scene2D.Camera
   private minZoom!: number
 
-  private terrainTiles!: Sprite[][]
+  private terrainTiles!: TerrainTile[][]
   private hoverIdicator!: Sprite
 
   constructor(config: string | Phaser.Types.Scenes.SettingsConfig) {
@@ -37,21 +40,19 @@ export class EditMap extends Scene {
   private setupMap(): void {
     const placement = getEditMapState().map.placement
 
-    this.terrainTiles = Array(placement.size.width).fill(
-      Array(placement.size.height)
-    )
+    this.terrainTiles = []
 
-    placement.terrain.forEach((element, x) => {
-      element.forEach((terrain: TerrainType, y) => {
-        // TODO Properly determine correct sprite
+    for (let x = 0; x < placement.terrain.length; ++x) {
+      this.terrainTiles[x] = []
+      for (let y = 0; y < placement.terrain[x].length; ++y) {
         this.terrainTiles[x][y] = new TerrainTile(
           this,
           x,
           y,
-          (terrain as unknown) as GraphicsKey // TODO
+          (placement.terrain[x][y] as unknown) as GraphicsKey
         )
-      })
-    })
+      }
+    }
   }
 
   private setupCamera(): void {
@@ -102,6 +103,33 @@ export class EditMap extends Scene {
         )
       }
     )
+
+    mouseControl.addListener(
+      EditMapMouseEventType.Select,
+      (coordinate: Vector2) => {
+        const state = getEditMapState()
+
+        if (state.toolType == null || state.tool == null) {
+          return
+        }
+
+        if (state.toolType == EditMapToolType.Terrain) {
+          this.terrainTiles[coordinate.x][coordinate.y].setGraphic(
+            getGraphicKeyForTerrain(state.tool)
+          )
+        }
+      }
+    )
+  }
+}
+
+// TODO
+function getGraphicKeyForTerrain(terrain: EditMapTool): GraphicsKey {
+  switch (terrain) {
+    case EditMapTool.Plains:
+      return GraphicsKey.Plains
+    case EditMapTool.Forest:
+      return GraphicsKey.Forest
   }
 }
 

@@ -10,4 +10,8 @@ export class TerrainTile extends Phaser.GameObjects.Sprite {
 
     scene.add.existing(this)
   }
+
+  public setGraphic(key: GraphicsKey): void {
+    this.play(GraphicsData[key].animKey)
+  }
 }
