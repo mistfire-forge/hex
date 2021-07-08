@@ -1,4 +1,5 @@
 import { proxy } from 'valtio'
+import { subscribeKey } from 'valtio/utils'
 import { MapData } from '../../../../shared'
 
 export enum EditMapToolType {
@@ -29,8 +30,14 @@ export function getEditMapState(): EditMapState {
 
 export function initNewEditMapState(data: EditMapState): void {
   editMapState = proxy<EditMapState>(data)
+
+  subscribeKey(editMapState, 'map', mapChangeHandler)
 }
 
 export function resetEditMapState(): void {
   editMapState = null
+}
+
+function mapChangeHandler() {
+  console.log('Map Changed')
 }

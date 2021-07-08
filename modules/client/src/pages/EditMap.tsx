@@ -17,6 +17,8 @@ export function EditMap(): ReactElement {
 
   useEffect(() => {
     async function getMap() {
+      setIsLoading(true)
+
       const response = await getRequest(`/map/${id}`)
 
       if (!response.success) {

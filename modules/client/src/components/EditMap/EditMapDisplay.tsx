@@ -41,11 +41,10 @@ export function EditMapDisplay(): ReactElement {
       parent: elementRef.current!,
     })
 
-    engine.scene.add(LoadingKey, LoadingScene, false)
-    engine.scene.add(EditMapKey, EditMap, false)
-    engine.scene.start(LoadingKey, {
+    engine.scene.add(LoadingKey, LoadingScene, true, {
       nextSceneKey: EditMapKey,
     })
+    engine.scene.add(EditMapKey, EditMap, false)
 
     return () => {
       engine.destroy(true)

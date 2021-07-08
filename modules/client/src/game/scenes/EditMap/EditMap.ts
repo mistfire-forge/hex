@@ -1,4 +1,5 @@
 import Phaser, { Scene } from 'phaser'
+import { TerrainType } from '../../../../../shared'
 import {
   EditMapTool,
   EditMapToolType,
@@ -114,9 +115,14 @@ export class EditMap extends Scene {
         }
 
         if (state.toolType == EditMapToolType.Terrain) {
+          const placement = getEditMapState().map.placement
+          placement.terrain[coordinate.x][coordinate.y] = TerrainType.Forest
+
           this.terrainTiles[coordinate.x][coordinate.y].setGraphic(
             getGraphicKeyForTerrain(state.tool)
           )
+
+          console.log(placement.terrain)
         }
       }
     )
