@@ -7,6 +7,7 @@ import { myMaps } from './routes/myMaps'
 import { signIn } from './routes/signIn'
 import { createAccount } from './routes/createAccount'
 import { options } from './routes/options'
+import { updateMap } from './routes/updateMap'
 import { checkCors } from './utils/checkCors'
 import { checkToken, privateRoute } from './utils/token'
 
@@ -26,6 +27,7 @@ router.get('/map/:id', map)
 router.get('/me', privateRoute, me)
 router.get('/my-maps', privateRoute, myMaps)
 router.post('/create-map', privateRoute, createMap)
+router.post('/update-map/:id', privateRoute, updateMap)
 
 router.all(
   '*',

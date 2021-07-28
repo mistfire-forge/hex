@@ -121,8 +121,6 @@ export class EditMap extends Scene {
           this.terrainTiles[coordinate.x][coordinate.y].setGraphic(
             getGraphicKeyForTerrain(state.tool)
           )
-
-          console.log(placement.terrain)
         }
       }
     )

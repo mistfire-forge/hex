@@ -1,7 +1,12 @@
-import { makeStyles, Tab, Tabs } from '@material-ui/core'
+import { makeStyles, Tab, Tabs, Typography } from '@material-ui/core'
 import React, { ReactElement, useEffect, useRef, useState } from 'react'
+import { useSnapshot } from 'valtio'
 import { EditMap, EditMapKey } from '../../game/scenes/EditMap/EditMap'
 import { LoadingKey, LoadingScene } from '../../game/scenes/Loading'
+import {
+  EditMapSaveStatus,
+  getEditMapState,
+} from '../../game/utils/EditMapState'
 import { MapTools } from './MapTools'
 
 enum TabState {
@@ -11,6 +16,21 @@ enum TabState {
 
 const useStyles = makeStyles({
   container: {
+    maxWidth: 1200,
+    display: 'flex',
+    flexDirection: 'column',
+    margin: 'auto',
+    paddingTop: 30,
+  },
+  nameRow: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: '100%',
+  },
+  spacer: {
+    flex: 1,
+  },
+  contentArea: {
     display: 'flex',
     flexDirection: 'row',
     width: '100%',
@@ -20,8 +40,8 @@ const useStyles = makeStyles({
   mapRoot: {
     paddingTop: 10,
     marginRight: 10,
-    maxWidth: 1280,
-    maxHeight: 720,
+    // maxWidth: 1280,
+    // maxHeight: 720,
   },
 })
 
@@ -29,6 +49,8 @@ export function EditMapDisplay(): ReactElement {
   const classes = useStyles()
   const [tabState, setTabState] = useState(TabState.Tools)
   const elementRef = useRef<HTMLDivElement>(null)
+
+  const mapData = useSnapshot(getEditMapState())
 
   useEffect(() => {
     const engine = new Phaser.Game({
@@ -51,16 +73,35 @@ export function EditMapDisplay(): ReactElement {
     }
   }, [])
 
+  let saveStateText
+  switch (mapData.saveStatus) {
+    case EditMapSaveStatus.NotSaved:
+      saveStateText = 'Not Saved'
+      break
+    case EditMapSaveStatus.Saving:
+      saveStateText = 'Saving...'
+      break
+    case EditMapSaveStatus.Saved:
+      break
+  }
+
   return (
     <div className={classes.container}>
-      <div ref={elementRef} className={classes.mapRoot} />
-      <div>
-        <Tabs value={tabState} onChange={(event, val) => setTabState(val)}>
-          <Tab label='Tools' />
-          <Tab label='Data' />
-        </Tabs>
-        <div hidden={tabState !== TabState.Tools}>
-          <MapTools />
+      <div className={classes.nameRow}>
+        <Typography variant='h4'>{mapData.map.name}</Typography>
+        <div className={classes.spacer} />
+        <Typography variant='body2'>{saveStateText}</Typography>
+      </div>
+      <div className={classes.contentArea}>
+        <div ref={elementRef} className={classes.mapRoot} />
+        <div>
+          <Tabs value={tabState} onChange={(event, val) => setTabState(val)}>
+            <Tab label='Tools' />
+            <Tab label='Data' />
+          </Tabs>
+          <div hidden={tabState !== TabState.Tools}>
+            <MapTools />
+          </div>
         </div>
       </div>
     </div>

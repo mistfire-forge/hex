@@ -1,6 +1,8 @@
-import { proxy } from 'valtio'
-import { subscribeKey } from 'valtio/utils'
+import { proxy, subscribe } from 'valtio'
+import { debounce } from '@material-ui/core'
+
 import { MapData } from '../../../../shared'
+import { postRequest } from '../../utils/apiCall'
 
 export enum EditMapToolType {
   Terrain,
@@ -12,11 +14,19 @@ export enum EditMapTool {
   Forest,
 }
 
+export enum EditMapSaveStatus {
+  Saved,
+  NotSaved,
+  Saving,
+}
+
 interface EditMapState {
   id: string
   map: MapData
   toolType?: EditMapToolType
   tool?: EditMapTool
+
+  saveStatus: EditMapSaveStatus
 }
 
 let editMapState: EditMapState | null = null
@@ -28,10 +38,19 @@ export function getEditMapState(): EditMapState {
   return editMapState
 }
 
-export function initNewEditMapState(data: EditMapState): void {
-  editMapState = proxy<EditMapState>(data)
+interface InitArgs {
+  id: string
+  map: MapData
+}
 
-  subscribeKey(editMapState, 'map', mapChangeHandler)
+export function initNewEditMapState({ id, map }: InitArgs): void {
+  editMapState = proxy<EditMapState>({
+    id,
+    map,
+    saveStatus: EditMapSaveStatus.Saved,
+  })
+
+  subscribe(editMapState.map, mapChangeHandler)
 }
 
 export function resetEditMapState(): void {
@@ -39,5 +58,26 @@ export function resetEditMapState(): void {
 }
 
 function mapChangeHandler() {
-  console.log('Map Changed')
+  const state = getEditMapState()
+
+  state.saveStatus = EditMapSaveStatus.NotSaved
+
+  saveDebounced()
 }
+
+const saveDebounced = debounce(async () => {
+  const state = getEditMapState()
+  state.saveStatus = EditMapSaveStatus.Saving
+
+  try {
+    const result = await postRequest('/update-map/1', {
+      body: JSON.stringify({
+        yo: 'ho',
+      }),
+    })
+
+    console.log(result)
+  } catch (error) {
+    console.error(error)
+  }
+}, 1000)
