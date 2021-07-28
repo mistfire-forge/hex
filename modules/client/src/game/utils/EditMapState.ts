@@ -57,15 +57,7 @@ export function resetEditMapState(): void {
   editMapState = null
 }
 
-function mapChangeHandler() {
-  const state = getEditMapState()
-
-  state.saveStatus = EditMapSaveStatus.NotSaved
-
-  saveDebounced()
-}
-
-const saveDebounced = debounce(async () => {
+const saveMapDebounced = debounce(async () => {
   const state = getEditMapState()
   state.saveStatus = EditMapSaveStatus.Saving
 
@@ -81,3 +73,11 @@ const saveDebounced = debounce(async () => {
     console.error(error)
   }
 }, 1000)
+
+function mapChangeHandler() {
+  const state = getEditMapState()
+
+  state.saveStatus = EditMapSaveStatus.NotSaved
+
+  saveMapDebounced()
+}

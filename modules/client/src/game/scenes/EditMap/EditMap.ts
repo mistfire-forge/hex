@@ -128,6 +128,31 @@ export class EditMap extends Scene {
 }
 
 // TODO
+interface TypeFromTool {
+  terrain?: {
+    type: TerrainType
+    graphic: GraphicsKey
+  }
+  // structure?:
+  // unit?:
+}
+
+// TODO
+function getTypeForTool(mapTool: EditMapTool): TypeFromTool | null {
+  switch (mapTool) {
+    case EditMapTool.Plains:
+      return {
+        terrain: {
+          type: TerrainType.Plains,
+          graphic: GraphicsKey.Plains,
+        },
+      }
+  }
+
+  return null
+}
+
+// TODO
 function getGraphicKeyForTerrain(terrain: EditMapTool): GraphicsKey {
   switch (terrain) {
     case EditMapTool.Plains:
