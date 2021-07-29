@@ -2,26 +2,15 @@ import { Grid, makeStyles } from '@material-ui/core'
 import React, { ReactElement, useCallback, useMemo } from 'react'
 import Spritesheet from 'react-responsive-spritesheet'
 import { useSnapshot } from 'valtio'
-import {
-  EditMapTool,
-  EditMapToolType,
-  getEditMapState,
-} from '../../game/utils/EditMapState'
-import {
-  GraphicsData,
-  GraphicsKey,
-  SelectionCursorPadding,
-  TileSize,
-} from '../../game/utils/GraphicsData'
+import { EditMapTool, getEditMapState, } from '../../game/utils/EditMapState'
+import { GraphicsData, GraphicsKey, SelectionCursorPadding, TileSize, } from '../../game/utils/GraphicsData'
 
 interface PlacementToolProps {
-  toolType: EditMapToolType
   tool: EditMapTool
   graphicKey: GraphicsKey
 }
 
 export function PlacementTool({
-  toolType,
   tool,
   graphicKey,
 }: PlacementToolProps): ReactElement {
@@ -35,10 +24,9 @@ export function PlacementTool({
   const editState = getEditMapState()
   const snapshot = useSnapshot(editState)
 
-  const isCurrentTool = snapshot.tool === tool && snapshot.toolType === toolType
+  const isCurrentTool = snapshot.tool === tool
 
   const onClick = useCallback(() => {
-    editState.toolType = toolType
     editState.tool = tool
   }, [])
 

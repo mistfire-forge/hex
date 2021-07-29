@@ -1,5 +1,5 @@
 import { createSuccess } from '../utils/createResponse'
-import { createClient } from '../utils/faunaClient'
+import { createClient, query as q } from '../utils/faunaClient'
 import { RequestWithToken } from '../utils/token'
 import { wrapFaunaResponse } from '../utils/wrapFaunaResponse'
 
@@ -13,13 +13,22 @@ export const updateMap = wrapFaunaResponse<UpdateRequest>(
   async (req): Promise<Response> => {
     const { id } = req.params
 
-    console.log('ID', id)
-
     const client = createClient(req.token)
+
+    const result = await client.query(
+      q.Update(
+        q.Ref(q.Collection('maps'), id),
+        {
+          data: {
+            extra: 'ho'
+          }
+        }
+      )
+    )
 
     return createSuccess(
       {
-        id: id,
+        data: result
       },
       req
     )

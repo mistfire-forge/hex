@@ -1,10 +1,6 @@
 import Phaser, { Scene } from 'phaser'
 import { TerrainType } from '../../../../../shared'
-import {
-  EditMapTool,
-  EditMapToolType,
-  getEditMapState,
-} from '../../utils/EditMapState'
+import { EditMapTool, getEditMapState } from '../../utils/EditMapState'
 import { GraphicsKey, TileSize } from '../../utils/GraphicsData'
 import { TerrainTile } from '../../utils/TerrainTile'
 import {
@@ -79,6 +75,8 @@ export class EditMap extends Scene {
   private setupControls(): void {
     const mouseControl = new EditMapMouseControls(this, this.mainCamera)
 
+    const state = getEditMapState()
+
     mouseControl.addListener(
       EditMapMouseEventType.Pan,
       (x: number, y: number) => {
@@ -108,20 +106,23 @@ export class EditMap extends Scene {
     mouseControl.addListener(
       EditMapMouseEventType.Select,
       (coordinate: Vector2) => {
-        const state = getEditMapState()
-
-        if (state.toolType == null || state.tool == null) {
+        if (state.tool == null) {
           return
         }
 
-        if (state.toolType == EditMapToolType.Terrain) {
-          const placement = getEditMapState().map.placement
-          placement.terrain[coordinate.x][coordinate.y] = TerrainType.Forest
+        const placement = state.map.placement
+
+        const types = getTypeForTool(state.tool)
+
+        if (types?.terrain != null) {
+          placement.terrain[coordinate.x][coordinate.y] = types.terrain.type
 
           this.terrainTiles[coordinate.x][coordinate.y].setGraphic(
-            getGraphicKeyForTerrain(state.tool)
+            types.terrain.graphic
           )
         }
+
+        // TODO
       }
     )
   }
@@ -147,19 +148,16 @@ function getTypeForTool(mapTool: EditMapTool): TypeFromTool | null {
           graphic: GraphicsKey.Plains,
         },
       }
+    case EditMapTool.Forest:
+      return {
+        terrain: {
+          type: TerrainType.Forest,
+          graphic: GraphicsKey.Forest,
+        },
+      }
   }
 
   return null
-}
-
-// TODO
-function getGraphicKeyForTerrain(terrain: EditMapTool): GraphicsKey {
-  switch (terrain) {
-    case EditMapTool.Plains:
-      return GraphicsKey.Plains
-    case EditMapTool.Forest:
-      return GraphicsKey.Forest
-  }
 }
 
 export const EditMapKey = 'Edit Map'

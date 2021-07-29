@@ -4,11 +4,6 @@ import { debounce } from '@material-ui/core'
 import { MapData } from '../../../../shared'
 import { postRequest } from '../../utils/apiCall'
 
-export enum EditMapToolType {
-  Terrain,
-  Unit,
-}
-
 export enum EditMapTool {
   Plains,
   Forest,
@@ -23,7 +18,6 @@ export enum EditMapSaveStatus {
 interface EditMapState {
   id: string
   map: MapData
-  toolType?: EditMapToolType
   tool?: EditMapTool
 
   saveStatus: EditMapSaveStatus
@@ -62,7 +56,7 @@ const saveMapDebounced = debounce(async () => {
   state.saveStatus = EditMapSaveStatus.Saving
 
   try {
-    const result = await postRequest('/update-map/1', {
+    const result = await postRequest(`/update-map/${state.id}`, {
       body: JSON.stringify({
         yo: 'ho',
       }),
