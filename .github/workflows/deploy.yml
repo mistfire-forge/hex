@@ -84,10 +84,10 @@ jobs:
         run: cd modules/db && npm install
 
       - name: Install Pulumi CLI
-        uses: pulumi/action-install-pulumi-cli@v1.0.1
+        uses: pulumi/setup-pulumi@v2
 
       - name: Deploy Pulumi
-        uses: pulumi/actions@v2
+        uses: pulumi/actions@v3
         with:
           command: up
           stack-name: ${{ env.GITHUB_REF_SLUG }}
