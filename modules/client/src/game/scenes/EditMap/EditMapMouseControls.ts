@@ -37,6 +37,11 @@ export class EditMapMouseControls extends Phaser.Events.EventEmitter {
   private pointerDown = (event: PointerEvent): void => {
     switch (event.button) {
       case 0:
+        const currentTile = this.findTileCoordinate(event.x, event.y)
+
+        this.currentSelection = currentTile
+        this.emit(EditMapMouseEventType.Select, currentTile)
+
         break
       case 2:
         this.isPanning = true
@@ -50,6 +55,9 @@ export class EditMapMouseControls extends Phaser.Events.EventEmitter {
 
   private pointerUp = (event: PointerEvent): void => {
     switch (event.button) {
+      case 0:
+        this.currentSelection = null
+        break
       case 2:
         this.isPanning = false
         this.previousPan = null

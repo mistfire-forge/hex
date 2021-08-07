@@ -1,20 +1,29 @@
-import { TerrainType } from '../../../../shared'
-
 export const TileSize = 64
 
 export const SelectionCursorPadding = 2
 
-export const TerrainGraphics = {
-  key: 'Terrain',
-  path: 'graphics/tiles.png',
-  data: {
-    [TerrainType.PLAINS]: {
-      frames: [1],
-      animKey: 'BG_Plains',
-    },
-    [TerrainType.FOREST]: {
-      frames: [2, 3],
-      animKey: 'BG_Forest',
-    },
+export enum GraphicsKey {
+  Plains,
+  Forest,
+}
+
+type GraphicsDataType = {
+  [index in GraphicsKey]: {
+    path: string
+    key: string
+    animKey: string
+    width?: number
+  }
+}
+export const GraphicsData: GraphicsDataType = {
+  [GraphicsKey.Plains]: {
+    path: 'terrain/plains.png',
+    key: 'Plains',
+    animKey: 'BG_Plains',
+  },
+  [GraphicsKey.Forest]: {
+    path: 'terrain/forest.png',
+    key: 'Forest',
+    animKey: 'BG_Forest',
   },
 }

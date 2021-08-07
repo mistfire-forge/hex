@@ -27,38 +27,6 @@ enum SignInError {
   ServerError,
 }
 
-interface SignInResponse extends APIResponse {
-  data: {
-    user: UserData
-  }
-}
-
-const useStyles = makeStyles(theme => ({
-  card: {
-    marginTop: theme.spacing(8),
-    padding: theme.spacing(2),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  avatar: {
-    backgroundColor: theme.palette.secondary.main,
-    marginBottom: theme.spacing(1),
-  },
-  button: {
-    margin: theme.spacing(2, 0, 1),
-    height: 50, // This should be the height of the Progress Indicator
-  },
-  linkSection: {
-    display: 'flex',
-    flexDirection: 'row',
-    width: '100%',
-  },
-  spacer: {
-    flex: 1,
-  },
-}))
-
 export function SignIn(): ReactElement {
   const classes = useStyles()
   const history = useHistory()
@@ -163,6 +131,12 @@ export function SignIn(): ReactElement {
   )
 }
 
+interface SignInResponse extends APIResponse {
+  data: {
+    user: UserData
+  }
+}
+
 async function signInRequest(email: string, password: string) {
   return (await postRequest('sign-in', {
     body: JSON.stringify({
@@ -171,3 +145,29 @@ async function signInRequest(email: string, password: string) {
     }),
   })) as SignInResponse
 }
+
+const useStyles = makeStyles(theme => ({
+  card: {
+    marginTop: theme.spacing(8),
+    padding: theme.spacing(2),
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  avatar: {
+    backgroundColor: theme.palette.secondary.main,
+    marginBottom: theme.spacing(1),
+  },
+  button: {
+    margin: theme.spacing(2, 0, 1),
+    height: 50, // This should be the height of the Progress Indicator
+  },
+  linkSection: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: '100%',
+  },
+  spacer: {
+    flex: 1,
+  },
+}))

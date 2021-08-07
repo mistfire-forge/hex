@@ -10,6 +10,6 @@ export interface MapData {
 }
 
 export enum TerrainType {
-  PLAINS,
-  FOREST,
+  Plains,
+  Forest,
 }

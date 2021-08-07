@@ -146,8 +146,8 @@ const playerRole = new Role(
           ),
           write: q.Query((oldData, newData) =>
             q.And(
-              q.Equals(q.Select(['creator'], oldData), q.CurrentIdentity()),
-              q.Equals(q.Select(['creator'], newData), q.CurrentIdentity())
+              q.Not(q.ContainsPath(['creator'], newData)),
+              q.Not(q.ContainsPath(['created'], newData))
             )
           ),
         },

@@ -1,7 +1,7 @@
 import Phaser, { Scene } from 'phaser'
 import { TerrainType } from '../../../../../shared'
-import { getEditMapState } from '../../utils/EditMapState'
-import { TileSize } from '../../utils/GraphicsData'
+import { EditMapTool, getEditMapState } from '../../utils/EditMapState'
+import { GraphicsKey, TileSize } from '../../utils/GraphicsData'
 import { TerrainTile } from '../../utils/TerrainTile'
 import {
   EditMapMouseControls,
@@ -15,7 +15,7 @@ export class EditMap extends Scene {
   private mainCamera!: Phaser.Cameras.Scene2D.Camera
   private minZoom!: number
 
-  private terrainTiles!: Sprite[][]
+  private terrainTiles!: TerrainTile[][]
   private hoverIdicator!: Sprite
 
   constructor(config: string | Phaser.Types.Scenes.SettingsConfig) {
@@ -37,16 +37,19 @@ export class EditMap extends Scene {
   private setupMap(): void {
     const placement = getEditMapState().map.placement
 
-    this.terrainTiles = Array(placement.size.width).fill(
-      Array(placement.size.height)
-    )
+    this.terrainTiles = []
 
-    placement.terrain.forEach((element, x) => {
-      element.forEach((terrain: TerrainType, y) => {
-        // TODO Properly determine correct sprite
-        this.terrainTiles[x][y] = new TerrainTile(this, x, y, true, 'BG_Forest')
-      })
-    })
+    for (let x = 0; x < placement.terrain.length; ++x) {
+      this.terrainTiles[x] = []
+      for (let y = 0; y < placement.terrain[x].length; ++y) {
+        this.terrainTiles[x][y] = new TerrainTile(
+          this,
+          x,
+          y,
+          (placement.terrain[x][y] as unknown) as GraphicsKey
+        )
+      }
+    }
   }
 
   private setupCamera(): void {
@@ -71,6 +74,8 @@ export class EditMap extends Scene {
 
   private setupControls(): void {
     const mouseControl = new EditMapMouseControls(this, this.mainCamera)
+
+    const state = getEditMapState()
 
     mouseControl.addListener(
       EditMapMouseEventType.Pan,
@@ -97,7 +102,62 @@ export class EditMap extends Scene {
         )
       }
     )
+
+    mouseControl.addListener(
+      EditMapMouseEventType.Select,
+      (coordinate: Vector2) => {
+        if (state.tool == null) {
+          return
+        }
+
+        const placement = state.map.placement
+
+        const types = getTypeForTool(state.tool)
+
+        if (types?.terrain != null) {
+          placement.terrain[coordinate.x][coordinate.y] = types.terrain.type
+
+          this.terrainTiles[coordinate.x][coordinate.y].setGraphic(
+            types.terrain.graphic
+          )
+        }
+
+        // TODO
+      }
+    )
   }
+}
+
+// TODO
+interface TypeFromTool {
+  terrain?: {
+    type: TerrainType
+    graphic: GraphicsKey
+  }
+  // structure?:
+  // unit?:
+}
+
+// TODO
+function getTypeForTool(mapTool: EditMapTool): TypeFromTool | null {
+  switch (mapTool) {
+    case EditMapTool.Plains:
+      return {
+        terrain: {
+          type: TerrainType.Plains,
+          graphic: GraphicsKey.Plains,
+        },
+      }
+    case EditMapTool.Forest:
+      return {
+        terrain: {
+          type: TerrainType.Forest,
+          graphic: GraphicsKey.Forest,
+        },
+      }
+  }
+
+  return null
 }
 
 export const EditMapKey = 'Edit Map'

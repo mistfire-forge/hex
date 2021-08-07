@@ -10,15 +10,9 @@ import { makeStyles } from '@material-ui/core/styles'
 import React, { ReactElement } from 'react'
 import { useHistory } from 'react-router-dom'
 
-const useStyles = makeStyles({
-  media: {
-    height: 300,
-  },
-})
-
 interface MapGridItemProps {
   name: string
-  id: number
+  id: string
   imageURL: string
 }
 export function MapGridItem({
@@ -44,3 +38,9 @@ export function MapGridItem({
     </Grid>
   )
 }
+
+const useStyles = makeStyles({
+  media: {
+    height: 300,
+  },
+})

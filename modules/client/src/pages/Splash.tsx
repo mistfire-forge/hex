@@ -1,17 +1,15 @@
+import { Typography } from '@material-ui/core'
 import React, { ReactElement } from 'react'
-import { useSnapshot } from 'valtio'
-import { globalState } from '../utils/globalState'
 
 export function Splash(): ReactElement {
-  const snapshot = useSnapshot(globalState)
-  const printGlobalState = () => {
-    console.log(snapshot)
-  }
-
   return (
     <>
       <h1>Splash</h1>
-      <button onClick={printGlobalState}>Print Global State</button>
+      <Typography variant='body1'>
+        This site is not constructed with Mobile in mind, in fact it will
+        probably not be possible to play without a mouse. Proceed at your
+        discretion.
+      </Typography>
     </>
   )
 }

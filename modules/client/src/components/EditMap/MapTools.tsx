@@ -1,5 +1,7 @@
 import { Grid, Typography } from '@material-ui/core'
 import React, { ReactElement } from 'react'
+import { EditMapTool } from '../../game/utils/EditMapState'
+import { GraphicsKey } from '../../game/utils/GraphicsData'
 import { PlacementTool } from './PlacementTool'
 
 export function MapTools(): ReactElement {
@@ -7,7 +9,14 @@ export function MapTools(): ReactElement {
     <>
       <Typography variant='body2'>Terrain</Typography>
       <Grid container>
-        <PlacementTool />
+        <PlacementTool
+          tool={EditMapTool.Plains}
+          graphicKey={GraphicsKey.Plains}
+        />
+        <PlacementTool
+          tool={EditMapTool.Forest}
+          graphicKey={GraphicsKey.Forest}
+        />
       </Grid>
     </>
   )
