@@ -3,6 +3,12 @@ import { createClient, query as q } from '../utils/faunaClient'
 import { RequestWithToken } from '../utils/token'
 import { wrapFaunaResponse } from '../utils/wrapFaunaResponse'
 
+interface CreateMapResponse {
+  ref: {
+    id: string
+  }
+}
+
 const defaultMapPlacement = {
   size: {
     width: 20,
@@ -16,7 +22,7 @@ export const createMap = wrapFaunaResponse<RequestWithToken>(
     const client = createClient(req.token)
     const reqBody = await req.json()
 
-    const queryResult = await client.query(
+    const queryResult = await client.query<CreateMapResponse>(
       q.Create(q.Collection('maps'), {
         data: {
           creator: q.CurrentIdentity(),
@@ -29,7 +35,7 @@ export const createMap = wrapFaunaResponse<RequestWithToken>(
 
     return createSuccess(
       {
-        result: queryResult,
+        id: queryResult.ref.id,
       },
       req
     )

@@ -14,37 +14,6 @@ enum TabState {
   Data,
 }
 
-const useStyles = makeStyles({
-  container: {
-    maxWidth: 1200,
-    display: 'flex',
-    flexDirection: 'column',
-    margin: 'auto',
-    paddingTop: 30,
-  },
-  nameRow: {
-    display: 'flex',
-    flexDirection: 'row',
-    width: '100%',
-  },
-  spacer: {
-    flex: 1,
-  },
-  contentArea: {
-    display: 'flex',
-    flexDirection: 'row',
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-  },
-  mapRoot: {
-    paddingTop: 10,
-    marginRight: 10,
-    // maxWidth: 1280,
-    // maxHeight: 720,
-  },
-})
-
 export function EditMapDisplay(): ReactElement {
   const classes = useStyles()
   const [tabState, setTabState] = useState(TabState.Tools)
@@ -82,6 +51,7 @@ export function EditMapDisplay(): ReactElement {
       saveStateText = 'Saving...'
       break
     case EditMapSaveStatus.Saved:
+      // saveStateText = 'Saved!'
       break
   }
 
@@ -107,3 +77,36 @@ export function EditMapDisplay(): ReactElement {
     </div>
   )
 }
+
+const useStyles = makeStyles({
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    marginLeft: '5%',
+    marginRight: '5%',
+    paddingTop: 30,
+  },
+  nameRow: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: '100%',
+    alignItems: 'center',
+  },
+  spacer: {
+    flex: 1,
+  },
+  contentArea: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+  },
+  mapRoot: {
+    paddingTop: 10,
+    marginRight: 10,
+    // maxWidth: 1280,
+    // maxHeight: 720,
+  },
+})

@@ -13,6 +13,7 @@ export enum EditMapSaveStatus {
   Saved,
   NotSaved,
   Saving,
+  Error,
 }
 
 interface EditMapState {
@@ -51,23 +52,6 @@ export function resetEditMapState(): void {
   editMapState = null
 }
 
-const saveMapDebounced = debounce(async () => {
-  const state = getEditMapState()
-  state.saveStatus = EditMapSaveStatus.Saving
-
-  try {
-    const result = await postRequest(`/update-map/${state.id}`, {
-      body: JSON.stringify({
-        yo: 'ho',
-      }),
-    })
-
-    console.log(result)
-  } catch (error) {
-    console.error(error)
-  }
-}, 1000)
-
 function mapChangeHandler() {
   const state = getEditMapState()
 
@@ -75,3 +59,26 @@ function mapChangeHandler() {
 
   saveMapDebounced()
 }
+
+const saveMapDebounced = debounce(async () => {
+  const state = getEditMapState()
+  state.saveStatus = EditMapSaveStatus.Saving
+
+  try {
+    const result = await postRequest(`/update-map/${state.id}`, {
+      body: JSON.stringify(state.map.placement),
+    })
+
+    if (result.success) {
+      if (state.saveStatus === EditMapSaveStatus.Saving) {
+        state.saveStatus = EditMapSaveStatus.Saved
+      }
+    } else {
+      console.error('Something went wrong', result)
+
+      state.saveStatus = EditMapSaveStatus.Error
+    }
+  } catch (error) {
+    console.error(error)
+  }
+}, 1000)

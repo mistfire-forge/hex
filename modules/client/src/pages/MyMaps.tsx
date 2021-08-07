@@ -5,22 +5,12 @@ import { CreateMapDialog } from '../components/CreateMapDialog'
 import { MapGridItem } from '../components/MapGridItem'
 import { Spinner } from '../components/Spinner'
 import { TitleBar } from '../components/TitleBar'
-import { getRequest } from '../utils/apiCall'
-
-type MapQueryResults = [
-  number, // TS
-  string, // Map Name
-  {
-    '@ref': {
-      id: number
-    }
-  }
-][]
+import { APIResponse, getRequest } from '../utils/apiCall'
 
 interface MapListData {
   name: string
-  refId: number
-  data?: string // TODO
+  id: string
+  ts: number
 }
 
 export function MyMaps(): ReactElement {
@@ -36,15 +26,10 @@ export function MyMaps(): ReactElement {
     const fetchMaps = async (): Promise<void> => {
       setLoading(true)
 
-      const result = await getRequest('/my-maps')
+      const result = await getMyMaps()
 
       if (result.success) {
-        const list = (result.data as MapQueryResults).map(element => ({
-          name: element[1],
-          refId: element[2]['@ref'].id,
-        }))
-
-        setMapsList(list)
+        setMapsList(result.data)
       } else {
         console.log('Failed', result.error)
         // TODO: Set Error
@@ -79,15 +64,25 @@ export function MyMaps(): ReactElement {
           {mapsList.map(element => (
             <MapGridItem
               name={element.name}
-              id={element.refId}
-              key={element.refId}
+              key={element.id}
+              id={element.id}
+              // TODO
               imageURL='http://placekitten.com/400/300'
             />
           ))}
         </Grid>
       ) : (
+        // TODO
         <div>No Maps!</div>
       )}
     </Container>
   )
+}
+
+interface MapQueryResponse extends APIResponse {
+  data: MapListData[]
+}
+
+async function getMyMaps() {
+  return (await getRequest('/my-maps')) as MapQueryResponse
 }

@@ -12,23 +12,22 @@ interface UpdateRequest extends RequestWithToken {
 export const updateMap = wrapFaunaResponse<UpdateRequest>(
   async (req): Promise<Response> => {
     const { id } = req.params
+    const reqBody = await req.json()
 
     const client = createClient(req.token)
 
     const result = await client.query(
-      q.Update(
-        q.Ref(q.Collection('maps'), id),
-        {
-          data: {
-            extra: 'ho'
-          }
-        }
-      )
+      q.Update(q.Ref(q.Collection('maps'), id), {
+        data: {
+          placement: reqBody,
+        },
+      })
     )
 
     return createSuccess(
       {
-        data: result
+        data: result,
+        body: reqBody,
       },
       req
     )

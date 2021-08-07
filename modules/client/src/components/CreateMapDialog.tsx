@@ -8,13 +8,10 @@ import {
   TextField,
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
+import { useHistory } from 'react-router-dom'
 
-import { postRequest } from '../utils/apiCall'
+import { APIResponse, postRequest } from '../utils/apiCall'
 import { Spinner } from './Spinner'
-
-const useStyles = makeStyles({
-  dialogActions: { paddingLeft: 15, paddingRight: 15 },
-})
 
 interface CreateMapDialogProps {
   displayDialog: boolean
@@ -28,6 +25,7 @@ export function CreateMapDialog({
 
   const newMapNameRef = useRef<HTMLInputElement>()
   const [loading, setLoading] = useState(false)
+  const history = useHistory()
 
   const handleCancelDialog = () => {
     setDisplayDialog(false)
@@ -44,7 +42,15 @@ export function CreateMapDialog({
     }
 
     setLoading(true)
-    await createMap(mapName)
+    const response = await createMap(mapName)
+
+    if (response.success) {
+      history.push(`/edit/${response.data.id}`)
+      return
+    }
+
+    // TODO Some error message
+
     setLoading(false)
   }
 
@@ -81,18 +87,20 @@ export function CreateMapDialog({
   )
 }
 
-async function createMap(name: string) {
-  const result = await postRequest('/create-map', {
+interface CreateMapResponse extends APIResponse {
+  data: {
+    id: string
+  }
+}
+
+async function createMap(name: string): Promise<CreateMapResponse> {
+  return (await postRequest('/create-map', {
     body: JSON.stringify({
       name,
     }),
-  })
-
-  console.log('Result', result)
-
-  if (result.success) {
-    console.log(result.data)
-  } else {
-    console.error(result.error)
-  }
+  })) as CreateMapResponse
 }
+
+const useStyles = makeStyles({
+  dialogActions: { paddingLeft: 15, paddingRight: 15 },
+})
