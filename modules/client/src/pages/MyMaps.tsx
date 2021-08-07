@@ -67,7 +67,7 @@ export function MyMaps(): ReactElement {
               key={element.id}
               id={element.id}
               // TODO
-              imageURL='http://placekitten.com/400/300'
+              imageURL='http://placekitten.com/410/300'
             />
           ))}
         </Grid>
