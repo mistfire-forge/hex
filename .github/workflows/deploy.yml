@@ -8,33 +8,9 @@ on:
       - development
 
 jobs:
-  filter-changes:
-    name: Filter Changes
-    runs-on: ubuntu-latest
-    outputs:
-      client: ${{ steps.filter.outputs.client }}
-      api: ${{ steps.filter.outputs.api }}
-      db: ${{ steps.filter.outputs.db }}
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - uses: dorny/paths-filter@v2
-        id: filter
-        with:
-          base: ${{ github.ref }}
-          filters: |
-            api:
-              - 'modules/api/**'
-              - 'modules/shared/**'
-            db:
-              - 'modules/db/**'
-
   update-api:
     name: Update API
     runs-on: ubuntu-latest
-    needs: filter-changes
-    if: ${{ needs.filter-changes.outputs.api == true }}
     steps:
       # Turnstyle?
 
@@ -76,10 +52,8 @@ jobs:
           FAUNA_ACCESS_KEY: ${{ env.FAUNA_ACCESS_KEY }}
 
   update-db:
-    name: Update API
+    name: Update DB
     runs-on: ubuntu-latest
-    needs: filter-changes
-    if: ${{ needs.filter-changes.outputs.db == true }}
     steps:
       # Turnstyle?
 
