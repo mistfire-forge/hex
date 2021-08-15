@@ -5,7 +5,7 @@ const path = require('path')
 module.exports = {
   entry: './src/App.tsx',
   output: {
-    path: path.resolve(__dirname, 'build'),
+    path: path.resolve(__dirname, 'dist'),
     publicPath: '/',
   },
   module: {
